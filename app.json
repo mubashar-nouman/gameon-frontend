@@ -1,17 +1,19 @@
 {
   "expo": {
-    "name": "arena-app",
-    "slug": "arena-app",
+    "name": "GameOn",
+    "slug": "gameon",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
+    "scheme": "gameon",
     "userInterfaceStyle": "light",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "userInterfaceStyle": "light"
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
+        "backgroundColor": "#E6FBF3",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
@@ -19,6 +21,22 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "resizeMode": "contain",
+          "backgroundColor": "#00BE76"
+        }
+      ],
+      "expo-status-bar",
+      "expo-font"
+    ],
+    "androidStatusBar": {
+      "barStyle": "dark-content",
+      "backgroundColor": "#F7F8F8"
     }
   }
 }

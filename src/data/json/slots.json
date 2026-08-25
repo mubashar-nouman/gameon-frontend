@@ -1,0 +1,8 @@
+[
+  { "id": "s1", "time": "5:00 PM", "price": 4500, "status": "booked" },
+  { "id": "s2", "time": "6:00 PM", "price": 4500, "status": "available" },
+  { "id": "s3", "time": "7:00 PM", "price": 4500, "status": "booked" },
+  { "id": "s4", "time": "8:00 PM", "price": 6000, "status": "available", "peak": true },
+  { "id": "s5", "time": "9:00 PM", "price": 6000, "status": "available", "peak": true },
+  { "id": "s6", "time": "10:00 PM", "price": 4500, "status": "available" }
+]

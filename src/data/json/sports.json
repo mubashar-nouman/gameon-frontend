@@ -1,0 +1,7 @@
+[
+  { "id": "football", "name": "Football", "emoji": "⚽", "icon": "football" },
+  { "id": "cricket", "name": "Cricket", "emoji": "🏏", "icon": "tennisball" },
+  { "id": "badminton", "name": "Badminton", "emoji": "🏸", "icon": "fitness" },
+  { "id": "basketball", "name": "Basketball", "emoji": "🏀", "icon": "basketball" },
+  { "id": "padel", "name": "Padel", "emoji": "🎾", "icon": "tennisball-outline" }
+]

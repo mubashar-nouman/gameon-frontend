@@ -1,0 +1,7 @@
+[
+  { "id": "d0", "label": "Today", "day": "24" },
+  { "id": "d1", "label": "Tue", "day": "25" },
+  { "id": "d2", "label": "Wed", "day": "26" },
+  { "id": "d3", "label": "Thu", "day": "27" },
+  { "id": "d4", "label": "Fri", "day": "28" }
+]

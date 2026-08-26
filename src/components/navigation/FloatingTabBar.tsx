@@ -97,14 +97,36 @@ export default function FloatingTabBar({
 }
 
 function CreateButton({ onPress }: { onPress?: () => void }) {
+  const press = useSharedValue(0);
+
+  const fabStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: 1 - press.value * 0.08 }],
+  }));
+
+  const plusStyle = useAnimatedStyle(() => ({
+    transform: [{ rotate: `${press.value * 90}deg` }],
+  }));
+
   return (
     <Pressable
       accessibilityRole="button"
       accessibilityLabel="Create open match"
       onPress={onPress}
-      style={({ pressed }) => [styles.fab, pressed ? styles.fabPressed : null]}
+      onPressIn={() => {
+        press.value = withTiming(1, { duration: duration.fast });
+      }}
+      onPressOut={() => {
+        press.value = withTiming(0, { duration: duration.fast });
+      }}
     >
-      <Ionicons name="add" size={28} color={colors.white} />
+      <Animated.View style={[styles.fabWrap, fabStyle]}>
+        <View style={styles.fabHalo} />
+        <View style={styles.fab}>
+          <Animated.View style={plusStyle}>
+            <Ionicons name="add" size={28} color={colors.white} />
+          </Animated.View>
+        </View>
+      </Animated.View>
     </Pressable>
   );
 }
@@ -118,6 +140,7 @@ type TabItemProps = {
 
 function TabItem({ focused, icon, label, onPress }: TabItemProps) {
   const progress = useSharedValue(focused ? 1 : 0);
+  const press = useSharedValue(0);
 
   useEffect(() => {
     progress.value = withTiming(focused ? 1 : 0, {
@@ -126,9 +149,24 @@ function TabItem({ focused, icon, label, onPress }: TabItemProps) {
     });
   }, [focused, progress]);
 
+  // Soft pill grows behind the active tab.
+  // Underline grows out from the centre as the tab becomes active.
   const underlineStyle = useAnimatedStyle(() => ({
     opacity: progress.value,
-    transform: [{ scaleX: 0.4 + progress.value * 0.6 }],
+    transform: [{ scaleX: 0.3 + progress.value * 0.7 }],
+  }));
+
+  // Icon lifts and grows slightly on select, and dips while pressed.
+  const iconStyle = useAnimatedStyle(() => ({
+    transform: [
+      { translateY: -3 * progress.value + press.value * 2 },
+      { scale: 1 + progress.value * 0.12 - press.value * 0.06 },
+    ],
+  }));
+
+  const labelStyle = useAnimatedStyle(() => ({
+    opacity: 0.7 + progress.value * 0.3,
+    transform: [{ translateY: -1 * progress.value }],
   }));
 
   return (
@@ -137,20 +175,29 @@ function TabItem({ focused, icon, label, onPress }: TabItemProps) {
       accessibilityState={{ selected: focused }}
       accessibilityLabel={label}
       onPress={onPress}
+      onPressIn={() => {
+        press.value = withTiming(1, { duration: duration.fast });
+      }}
+      onPressOut={() => {
+        press.value = withTiming(0, { duration: duration.fast });
+      }}
       style={styles.item}
     >
-      <Ionicons
-        name={focused ? icon.filled : icon.outline}
-        size={20}
-        color={focused ? colors.primary : colors.muted}
-        style={styles.icon}
-      />
-      <Text
-        style={[styles.label, focused ? styles.labelActive : null]}
+      <Animated.View style={iconStyle}>
+        <Ionicons
+          name={focused ? icon.filled : icon.outline}
+          size={20}
+          color={focused ? colors.primary : colors.muted}
+        />
+      </Animated.View>
+
+      <Animated.Text
+        style={[styles.label, focused ? styles.labelActive : null, labelStyle]}
         numberOfLines={1}
       >
         {label}
-      </Text>
+      </Animated.Text>
+
       <Animated.View style={[styles.underline, underlineStyle]} />
     </Pressable>
   );
@@ -181,14 +228,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: spacing.xs,
   },
-  icon: {
-    marginBottom: -2,
-  },
   underline: {
-    marginTop: 3,
-    width: 16,
+    // Absolute so the indicator never adds height to the bar.
+    position: 'absolute',
+    bottom: 0,
+    width: 18,
     height: 3,
-    borderRadius: 2,
+    borderRadius: radius.pill,
     backgroundColor: colors.primary,
   },
   label: {
@@ -202,17 +248,30 @@ const styles = StyleSheet.create({
     color: colors.primary,
     fontWeight: fontWeight.semibold,
   },
+  fabWrap: {
+    width: 56,
+    height: 56,
+    marginHorizontal: spacing.sm,
+    marginTop: -spacing['2xl'],
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  fabHalo: {
+    position: 'absolute',
+    width: 68,
+    height: 68,
+    // Half of width/height — a circle, not a radius-token value.
+    borderRadius: 34,
+    backgroundColor: colors.white,
+  },
   fab: {
     width: 56,
     height: 56,
     // Half of width/height — a circle, not a radius-token value.
     borderRadius: 28,
-    marginHorizontal: spacing.sm,
-    marginTop: -spacing['2xl'],
     backgroundColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
     ...elevation.raised,
   },
-  fabPressed: { backgroundColor: colors.primaryDark },
 });

@@ -1,0 +1,8 @@
+[
+  { "id": "r1", "arenaId": "a1", "author": "Hamza A.", "rating": 5, "date": "2 days ago", "text": "Turf is in great condition and the floodlights are proper. Booked the 9 PM slot, owner confirmed within minutes." },
+  { "id": "r2", "arenaId": "a1", "author": "Bilal R.", "rating": 4, "date": "1 week ago", "text": "Good ground, parking gets tight on weekends. Changing room could be cleaner but overall solid." },
+  { "id": "r3", "arenaId": "a1", "author": "Usman K.", "rating": 5, "date": "2 weeks ago", "text": "Best futsal surface in DHA. We play here every Tuesday now." },
+  { "id": "r4", "arenaId": "a2", "author": "Ahmed S.", "rating": 4, "date": "4 days ago", "text": "Decent pitch and easy to find. Water was available which is a plus in summer." },
+  { "id": "r5", "arenaId": "a2", "author": "Zain M.", "rating": 5, "date": "3 weeks ago", "text": "Owner is very cooperative, let us extend by 30 minutes when the next slot was free." },
+  { "id": "r6", "arenaId": "a5", "author": "Faisal T.", "rating": 5, "date": "5 days ago", "text": "Nets are well maintained, bowling machine available on request. Great for practice." }
+]

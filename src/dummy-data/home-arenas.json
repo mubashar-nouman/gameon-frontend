@@ -643,5 +643,598 @@
       "Indoor",
       "Cafe"
     ]
+  },
+  {
+    "id": "g1",
+    "name": "Gulberg Cricket Club",
+    "area": "Gulberg III, Lahore",
+    "sportId": "cricket",
+    "grounds": 2,
+    "pricePerHour": 3500,
+    "rating": 4.5,
+    "reviewCount": 88,
+    "distanceKm": 3.4,
+    "availableWindows": [
+      "6AM – 12PM",
+      "12PM – 6PM",
+      "6PM – 12AM"
+    ],
+    "activeWindow": "6PM – 12AM",
+    "facilities": [
+      "Floodlights",
+      "Parking",
+      "Water"
+    ]
+  },
+  {
+    "id": "g2",
+    "name": "Liberty Basketball Court",
+    "area": "Gulberg II, Lahore",
+    "sportId": "basketball",
+    "grounds": 1,
+    "pricePerHour": 1600,
+    "rating": 4.2,
+    "reviewCount": 37,
+    "distanceKm": 3.9,
+    "availableWindows": [
+      "6AM – 12PM",
+      "12PM – 6PM",
+      "6PM – 12AM"
+    ],
+    "activeWindow": "6PM – 12AM",
+    "facilities": [
+      "Floodlights",
+      "Water"
+    ]
+  },
+  {
+    "id": "d1",
+    "name": "DHA Badminton Arena",
+    "area": "DHA Phase 6, Lahore",
+    "sportId": "badminton",
+    "grounds": 4,
+    "pricePerHour": 1900,
+    "rating": 4.6,
+    "reviewCount": 64,
+    "distanceKm": 2.7,
+    "availableWindows": [
+      "6AM – 12PM",
+      "12PM – 6PM",
+      "6PM – 12AM"
+    ],
+    "activeWindow": "12PM – 6PM",
+    "facilities": [
+      "Indoor",
+      "Parking",
+      "Cafe"
+    ]
+  },
+  {
+    "id": "j1",
+    "name": "Johar Town Cricket Ground",
+    "area": "Johar Town, Lahore",
+    "sportId": "cricket",
+    "grounds": 2,
+    "pricePerHour": 3200,
+    "rating": 4.4,
+    "reviewCount": 71,
+    "distanceKm": 4.6,
+    "availableWindows": [
+      "6AM – 12PM",
+      "12PM – 6PM",
+      "6PM – 12AM"
+    ],
+    "activeWindow": "6PM – 12AM",
+    "facilities": [
+      "Floodlights",
+      "Parking"
+    ]
+  },
+  {
+    "id": "j2",
+    "name": "Johar Padel Courts",
+    "area": "Johar Town, Lahore",
+    "sportId": "padel",
+    "grounds": 2,
+    "pricePerHour": 3600,
+    "rating": 4.7,
+    "reviewCount": 52,
+    "distanceKm": 5.1,
+    "availableWindows": [
+      "6AM – 12PM",
+      "12PM – 6PM",
+      "6PM – 12AM"
+    ],
+    "activeWindow": "6PM – 12AM",
+    "facilities": [
+      "Indoor",
+      "Cafe"
+    ]
+  },
+  {
+    "id": "j3",
+    "name": "Johar Hoops",
+    "area": "Johar Town, Lahore",
+    "sportId": "basketball",
+    "grounds": 1,
+    "pricePerHour": 1500,
+    "rating": 4.1,
+    "reviewCount": 29,
+    "distanceKm": 4.8,
+    "availableWindows": [
+      "6AM – 12PM",
+      "12PM – 6PM",
+      "6PM – 12AM"
+    ],
+    "activeWindow": "6PM – 12AM",
+    "facilities": [
+      "Floodlights",
+      "Water"
+    ]
+  },
+  {
+    "id": "m1",
+    "name": "Model Town Futsal",
+    "area": "Model Town, Lahore",
+    "sportId": "football",
+    "grounds": 2,
+    "pricePerHour": 4200,
+    "rating": 4.5,
+    "reviewCount": 83,
+    "distanceKm": 6.0,
+    "availableWindows": [
+      "6AM – 12PM",
+      "12PM – 6PM",
+      "6PM – 12AM"
+    ],
+    "activeWindow": "6PM – 12AM",
+    "facilities": [
+      "Floodlights",
+      "Parking",
+      "Water"
+    ]
+  },
+  {
+    "id": "m2",
+    "name": "Model Town Padel",
+    "area": "Model Town, Lahore",
+    "sportId": "padel",
+    "grounds": 2,
+    "pricePerHour": 3400,
+    "rating": 4.6,
+    "reviewCount": 45,
+    "distanceKm": 6.3,
+    "availableWindows": [
+      "6AM – 12PM",
+      "12PM – 6PM",
+      "6PM – 12AM"
+    ],
+    "activeWindow": "12PM – 6PM",
+    "facilities": [
+      "Indoor",
+      "Parking"
+    ]
+  },
+  {
+    "id": "m3",
+    "name": "Model Town Indoor TT",
+    "area": "Model Town, Lahore",
+    "sportId": "table-tennis",
+    "grounds": 3,
+    "pricePerHour": 1100,
+    "rating": 4.3,
+    "reviewCount": 38,
+    "distanceKm": 6.1,
+    "availableWindows": [
+      "6AM – 12PM",
+      "12PM – 6PM",
+      "6PM – 12AM"
+    ],
+    "activeWindow": "6PM – 12AM",
+    "facilities": [
+      "Indoor",
+      "Water"
+    ]
+  },
+  {
+    "id": "m4",
+    "name": "Model Town Badminton",
+    "area": "Model Town, Lahore",
+    "sportId": "badminton",
+    "grounds": 3,
+    "pricePerHour": 1700,
+    "rating": 4.4,
+    "reviewCount": 41,
+    "distanceKm": 6.2,
+    "availableWindows": [
+      "6AM – 12PM",
+      "12PM – 6PM",
+      "6PM – 12AM"
+    ],
+    "activeWindow": "12PM – 6PM",
+    "facilities": [
+      "Indoor",
+      "Cafe"
+    ]
+  },
+  {
+    "id": "b1",
+    "name": "Bahria Cricket Ground",
+    "area": "Bahria Town, Lahore",
+    "sportId": "cricket",
+    "grounds": 1,
+    "pricePerHour": 4000,
+    "rating": 4.5,
+    "reviewCount": 58,
+    "distanceKm": 11.5,
+    "availableWindows": [
+      "6AM – 12PM",
+      "12PM – 6PM",
+      "6PM – 12AM"
+    ],
+    "activeWindow": "6AM – 12PM",
+    "facilities": [
+      "Floodlights",
+      "Pavilion"
+    ]
+  },
+  {
+    "id": "b2",
+    "name": "Bahria Padel Club",
+    "area": "Bahria Town, Lahore",
+    "sportId": "padel",
+    "grounds": 2,
+    "pricePerHour": 3900,
+    "rating": 4.8,
+    "reviewCount": 67,
+    "distanceKm": 11.2,
+    "availableWindows": [
+      "6AM – 12PM",
+      "12PM – 6PM",
+      "6PM – 12AM"
+    ],
+    "activeWindow": "6PM – 12AM",
+    "facilities": [
+      "Indoor",
+      "Cafe",
+      "Parking"
+    ]
+  },
+  {
+    "id": "b3",
+    "name": "Bahria Table Tennis",
+    "area": "Bahria Town, Lahore",
+    "sportId": "table-tennis",
+    "grounds": 2,
+    "pricePerHour": 1000,
+    "rating": 4.2,
+    "reviewCount": 26,
+    "distanceKm": 11.4,
+    "availableWindows": [
+      "6AM – 12PM",
+      "12PM – 6PM",
+      "6PM – 12AM"
+    ],
+    "activeWindow": "12PM – 6PM",
+    "facilities": [
+      "Indoor",
+      "Water"
+    ]
+  },
+  {
+    "id": "b4",
+    "name": "Bahria Basketball Court",
+    "area": "Bahria Town, Lahore",
+    "sportId": "basketball",
+    "grounds": 1,
+    "pricePerHour": 1700,
+    "rating": 4.3,
+    "reviewCount": 33,
+    "distanceKm": 11.6,
+    "availableWindows": [
+      "6AM – 12PM",
+      "12PM – 6PM",
+      "6PM – 12AM"
+    ],
+    "activeWindow": "6PM – 12AM",
+    "facilities": [
+      "Floodlights",
+      "Parking"
+    ]
+  },
+  {
+    "id": "c1",
+    "name": "Cantt Padel Arena",
+    "area": "Cantt, Lahore",
+    "sportId": "padel",
+    "grounds": 2,
+    "pricePerHour": 3700,
+    "rating": 4.6,
+    "reviewCount": 49,
+    "distanceKm": 7.5,
+    "availableWindows": [
+      "6AM – 12PM",
+      "12PM – 6PM",
+      "6PM – 12AM"
+    ],
+    "activeWindow": "6PM – 12AM",
+    "facilities": [
+      "Indoor",
+      "Parking"
+    ]
+  },
+  {
+    "id": "c2",
+    "name": "Cantt Table Tennis Hall",
+    "area": "Cantt, Lahore",
+    "sportId": "table-tennis",
+    "grounds": 3,
+    "pricePerHour": 1200,
+    "rating": 4.4,
+    "reviewCount": 35,
+    "distanceKm": 7.7,
+    "availableWindows": [
+      "6AM – 12PM",
+      "12PM – 6PM",
+      "6PM – 12AM"
+    ],
+    "activeWindow": "12PM – 6PM",
+    "facilities": [
+      "Indoor",
+      "Cafe"
+    ]
+  },
+  {
+    "id": "c3",
+    "name": "Cantt Basketball Court",
+    "area": "Cantt, Lahore",
+    "sportId": "basketball",
+    "grounds": 1,
+    "pricePerHour": 1800,
+    "rating": 4.2,
+    "reviewCount": 31,
+    "distanceKm": 7.9,
+    "availableWindows": [
+      "6AM – 12PM",
+      "12PM – 6PM",
+      "6PM – 12AM"
+    ],
+    "activeWindow": "6PM – 12AM",
+    "facilities": [
+      "Floodlights",
+      "Water"
+    ]
+  },
+  {
+    "id": "c4",
+    "name": "Cantt Badminton Centre",
+    "area": "Cantt, Lahore",
+    "sportId": "badminton",
+    "grounds": 4,
+    "pricePerHour": 1800,
+    "rating": 4.5,
+    "reviewCount": 53,
+    "distanceKm": 7.6,
+    "availableWindows": [
+      "6AM – 12PM",
+      "12PM – 6PM",
+      "6PM – 12AM"
+    ],
+    "activeWindow": "12PM – 6PM",
+    "facilities": [
+      "Indoor",
+      "Parking"
+    ]
+  },
+  {
+    "id": "i5",
+    "name": "Iqbal Town Badminton",
+    "area": "Allama Iqbal Town, Lahore",
+    "sportId": "badminton",
+    "grounds": 3,
+    "pricePerHour": 1600,
+    "rating": 4.4,
+    "reviewCount": 39,
+    "distanceKm": 8.7,
+    "availableWindows": [
+      "6AM – 12PM",
+      "12PM – 6PM",
+      "6PM – 12AM"
+    ],
+    "activeWindow": "12PM – 6PM",
+    "facilities": [
+      "Indoor",
+      "Cafe"
+    ]
+  },
+  {
+    "id": "dh1",
+    "name": "DHA Cricket Nets",
+    "area": "DHA Phase 8, Lahore",
+    "sportId": "cricket",
+    "grounds": 4,
+    "pricePerHour": 2600,
+    "rating": 4.6,
+    "reviewCount": 94,
+    "distanceKm": 6.8,
+    "availableWindows": [
+      "6AM – 12PM",
+      "12PM – 6PM",
+      "6PM – 12AM"
+    ],
+    "activeWindow": "6PM – 12AM",
+    "facilities": [
+      "Floodlights",
+      "Changing room"
+    ]
+  },
+  {
+    "id": "dh2",
+    "name": "DHA Badminton Club",
+    "area": "DHA Phase 5, Lahore",
+    "sportId": "badminton",
+    "grounds": 3,
+    "pricePerHour": 2000,
+    "rating": 4.7,
+    "reviewCount": 72,
+    "distanceKm": 1.6,
+    "availableWindows": [
+      "6AM – 12PM",
+      "12PM – 6PM",
+      "6PM – 12AM"
+    ],
+    "activeWindow": "6PM – 12AM",
+    "facilities": [
+      "Indoor",
+      "Cafe",
+      "Parking"
+    ]
+  },
+  {
+    "id": "gb1",
+    "name": "Gulberg Badminton Hall",
+    "area": "Gulberg III, Lahore",
+    "sportId": "badminton",
+    "grounds": 4,
+    "pricePerHour": 1850,
+    "rating": 4.5,
+    "reviewCount": 58,
+    "distanceKm": 3.6,
+    "availableWindows": [
+      "6AM – 12PM",
+      "12PM – 6PM",
+      "6PM – 12AM"
+    ],
+    "activeWindow": "12PM – 6PM",
+    "facilities": [
+      "Indoor",
+      "Water"
+    ]
+  },
+  {
+    "id": "bh1",
+    "name": "Bahria Futsal Arena",
+    "area": "Bahria Town, Lahore",
+    "sportId": "football",
+    "grounds": 2,
+    "pricePerHour": 4400,
+    "rating": 4.4,
+    "reviewCount": 61,
+    "distanceKm": 11.3,
+    "availableWindows": [
+      "6AM – 12PM",
+      "12PM – 6PM",
+      "6PM – 12AM"
+    ],
+    "activeWindow": "6PM – 12AM",
+    "facilities": [
+      "Floodlights",
+      "Cafe"
+    ]
+  },
+  {
+    "id": "lhr-iqbal-cricket",
+    "name": "Iqbal Town Cricket Nets",
+    "area": "Allama Iqbal Town, Lahore",
+    "sportId": "cricket",
+    "grounds": 3,
+    "pricePerHour": 2400,
+    "rating": 4.4,
+    "reviewCount": 62,
+    "distanceKm": 8.3,
+    "availableWindows": [
+      "6AM – 12PM",
+      "12PM – 6PM",
+      "6PM – 12AM"
+    ],
+    "activeWindow": "6PM – 12AM",
+    "facilities": [
+      "Floodlights",
+      "Water"
+    ]
+  },
+  {
+    "id": "lhr-iqbal-football",
+    "name": "Iqbal Town Football Ground",
+    "area": "Allama Iqbal Town, Lahore",
+    "sportId": "football",
+    "grounds": 2,
+    "pricePerHour": 3800,
+    "rating": 4.3,
+    "reviewCount": 55,
+    "distanceKm": 8.6,
+    "availableWindows": [
+      "6AM – 12PM",
+      "12PM – 6PM",
+      "6PM – 12AM"
+    ],
+    "activeWindow": "6PM – 12AM",
+    "facilities": [
+      "Floodlights",
+      "Parking"
+    ]
+  },
+  {
+    "id": "lhr-iqbal-padel",
+    "name": "Iqbal Town Padel",
+    "area": "Allama Iqbal Town, Lahore",
+    "sportId": "padel",
+    "grounds": 1,
+    "pricePerHour": 3300,
+    "rating": 4.5,
+    "reviewCount": 28,
+    "distanceKm": 8.4,
+    "availableWindows": [
+      "6AM – 12PM",
+      "12PM – 6PM",
+      "6PM – 12AM"
+    ],
+    "activeWindow": "12PM – 6PM",
+    "facilities": [
+      "Indoor",
+      "Water"
+    ]
+  },
+  {
+    "id": "lhr-iqbal-tt",
+    "name": "Iqbal Town TT Club",
+    "area": "Allama Iqbal Town, Lahore",
+    "sportId": "table-tennis",
+    "grounds": 2,
+    "pricePerHour": 1000,
+    "rating": 4.1,
+    "reviewCount": 22,
+    "distanceKm": 8.5,
+    "availableWindows": [
+      "6AM – 12PM",
+      "12PM – 6PM",
+      "6PM – 12AM"
+    ],
+    "activeWindow": "6PM – 12AM",
+    "facilities": [
+      "Indoor",
+      "Water"
+    ]
+  },
+  {
+    "id": "lhr-model-basket",
+    "name": "Model Town Basketball Court",
+    "area": "Model Town, Lahore",
+    "sportId": "basketball",
+    "grounds": 1,
+    "pricePerHour": 1600,
+    "rating": 4.2,
+    "reviewCount": 34,
+    "distanceKm": 6.4,
+    "availableWindows": [
+      "6AM – 12PM",
+      "12PM – 6PM",
+      "6PM – 12AM"
+    ],
+    "activeWindow": "6PM – 12AM",
+    "facilities": [
+      "Floodlights",
+      "Water"
+    ]
   }
 ]

@@ -20,12 +20,12 @@ import MatchesScreen from './src/screens/MatchesScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
 import SplashScreen from './src/screens/SplashScreen';
 import FloatingTabBar from './src/components/navigation/FloatingTabBar';
+import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import type {
   DiscoverStackParamList,
   RootTabParamList,
 } from './src/navigation/types';
 import { colors } from './src/theme/colors';
-import { fontSize, fontWeight } from './src/theme/typography';
 
 // Keep the native splash up until our own splash is rendered, so there is no
 // blank flash between the two.
@@ -78,12 +78,8 @@ function DiscoverNavigator() {
         name="ArenaDetail"
         component={ArenaDetailScreen}
         options={{
-          title: 'Ground details',
-          headerTintColor: colors.text,
-          headerTitleStyle: {
-            fontSize: fontSize.sectionTitle,
-            fontWeight: fontWeight.semibold,
-          },
+          // The screen draws its own back control over the hero image.
+          headerShown: false,
         }}
       />
     </DiscoverStack.Navigator>
@@ -139,7 +135,17 @@ export default function App() {
               <Tab.Screen
                 name="DiscoverTab"
                 component={DiscoverNavigator}
-                options={{ title: 'Home' }}
+                options={({ route }) => ({
+                  title: 'Home',
+                  // Arena detail owns the bottom of the screen with its own
+                  // booking bar, so the floating tabs would sit on top of it.
+                  tabBarStyle: {
+                    display:
+                      getFocusedRouteNameFromRoute(route) === 'ArenaDetail'
+                        ? 'none'
+                        : 'flex',
+                  },
+                })}
               />
               <Tab.Screen name="Matches" component={MatchesScreen} />
               <Tab.Screen name="Bookings" component={BookingsScreen} />

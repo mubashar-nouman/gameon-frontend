@@ -37,11 +37,21 @@ type Props = BottomTabBarProps & {
 export default function FloatingTabBar({
   state,
   navigation,
+  descriptors,
   icons,
   labels,
   onCreatePress,
 }: Props) {
   const insets = useSafeAreaInsets();
+
+  // A nested screen can opt the bar out via tabBarStyle: { display: 'none' }.
+  // This bar is custom, so React Navigation cannot apply that for us.
+  const focusedRoute = state.routes[state.index];
+  const focusedStyle = descriptors[focusedRoute.key]?.options.tabBarStyle as
+    | { display?: 'none' | 'flex' }
+    | undefined;
+
+  if (focusedStyle?.display === 'none') return null;
 
   return (
     <View

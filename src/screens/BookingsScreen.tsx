@@ -46,7 +46,9 @@ export default function BookingsScreen() {
                   {booking.date} · {booking.time} · {booking.area}
                 </Text>
                 <View style={styles.footer}>
-                  <Text style={styles.price}>{formatPkr(booking.price)}</Text>
+                  <Text style={styles.price} numberOfLines={1}>
+                    {formatPkr(booking.price)}
+                  </Text>
                   <Badge
                     label={booking.status === 'confirmed' ? 'Confirmed' : 'Pending'}
                     tone={booking.status === 'confirmed' ? 'positive' : 'attention'}

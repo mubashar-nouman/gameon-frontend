@@ -1,0 +1,16 @@
+{
+  "default": {
+    "about": "A well-maintained venue with floodlit surfaces, on-site parking and changing facilities. Slots run through the day and the owner usually confirms bookings within 15 minutes.",
+    "hours": [
+      { "day": "Monday – Thursday", "time": "6:00 AM – 12:00 AM" },
+      { "day": "Friday", "time": "6:00 AM – 1:00 PM, 3:00 PM – 12:00 AM" },
+      { "day": "Saturday – Sunday", "time": "6:00 AM – 1:00 AM" }
+    ],
+    "rules": [
+      "Studded boots are not allowed on artificial turf",
+      "Arrive 10 minutes before your slot starts",
+      "Cancellations must be made 4 hours in advance",
+      "No food or drinks on the playing surface"
+    ]
+  }
+}

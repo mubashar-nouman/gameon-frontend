@@ -5,7 +5,9 @@
  * there by hand and the app picks them up on reload. This module only attaches
  * types and joins records by `sportId`.
  */
+import arenaDetailsJson from '../dummy-data/home-arena-details.json';
 import citiesJson from '../dummy-data/home-cities.json';
+import reviewsJson from '../dummy-data/home-reviews.json';
 import arenasJson from '../dummy-data/home-arenas.json';
 import bookingDatesJson from './json/bookingDates.json';
 import bookingsJson from './json/bookings.json';
@@ -91,6 +93,17 @@ export type City = {
   enabled: boolean;
   areas: Area[];
 };
+export type Review = {
+  id: string;
+  arenaId: string;
+  author: string;
+  rating: number;
+  date: string;
+  text: string;
+};
+
+export type OpeningHours = { day: string; time: string };
+
 export type User = {
   id: string;
   firstName: string;
@@ -103,6 +116,28 @@ export const sports: Sport[] = sportsJson;
 export const arenas: Arena[] = arenasJson;
 export const openMatches: OpenMatch[] = openMatchesJson;
 export const cities: City[] = citiesJson;
+export const reviews: Review[] = reviewsJson;
+
+/** Reviews for one arena, newest first as authored. */
+export function getReviews(arenaId: string): Review[] {
+  return reviews.filter((review) => review.arenaId === arenaId);
+}
+
+/**
+ * Long-form detail copy. Only a shared default exists for now — per-arena
+ * entries can be added to home-arena-details.json under the arena id.
+ */
+export function getArenaDetail(arenaId: string): {
+  about: string;
+  hours: OpeningHours[];
+  rules: string[];
+} {
+  const map = arenaDetailsJson as Record<
+    string,
+    { about: string; hours: OpeningHours[]; rules: string[] }
+  >;
+  return map[arenaId] ?? map.default;
+}
 export const user: User = userJson;
 export const bookings: Booking[] = bookingsJson;
 export const slots: Slot[] = slotsJson;

@@ -86,7 +86,7 @@ export default function ArenaCard({
           </View>
 
           <View style={styles.priceRow}>
-            <Text style={styles.price}>
+            <Text style={styles.price} numberOfLines={1}>
               {formatPkr(arena.pricePerHour)}
               <Text style={styles.perHour}> / hr</Text>
             </Text>
@@ -193,6 +193,9 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   price: {
+    // flexShrink lets the label give way before it clips; the button keeps its
+    // intrinsic width via flexShrink: 0 below.
+    flexShrink: 1,
     fontSize: fontSize.callout,
     lineHeight: leading(fontSize.callout, 1.3),
     fontWeight: fontWeight.bold,
@@ -204,6 +207,7 @@ const styles = StyleSheet.create({
     color: colors.muted,
   },
   bookBtn: {
+    flexShrink: 0,
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.sm,
     borderRadius: radius.pill,

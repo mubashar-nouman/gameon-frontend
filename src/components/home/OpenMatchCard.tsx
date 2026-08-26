@@ -60,7 +60,7 @@ export default function OpenMatchCard({
       </View>
 
       <View style={styles.footer}>
-        <Text style={styles.price}>
+        <Text style={styles.price} numberOfLines={1}>
           {formatPkr(match.pricePerPlayer)}
           <Text style={styles.perPlayer}> / player</Text>
         </Text>
@@ -164,6 +164,7 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   price: {
+    flexShrink: 1,
     fontSize: fontSize.bodyLarge,
     lineHeight: leading(fontSize.bodyLarge, 1.3),
     fontWeight: fontWeight.bold,
@@ -175,6 +176,7 @@ const styles = StyleSheet.create({
     color: colors.muted,
   },
   joinBtn: {
+    flexShrink: 0,
     height: 32,
     justifyContent: 'center',
     paddingHorizontal: spacing.lg,

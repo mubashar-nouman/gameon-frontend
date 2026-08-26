@@ -22,6 +22,8 @@ export const fontSize = {
   callout: 16,
   /** Section headings within a screen. */
   sectionTitle: 17,
+  /** Single large figure — a rating or count used as a visual anchor. */
+  statHero: 32,
   /** The one large heading per screen. */
   screenTitle: 20,
   /** Emoji glyph inside sport tiles — a graphic, not body copy. */

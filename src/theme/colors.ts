@@ -3,6 +3,9 @@ export const colors = {
   primaryDark: '#00905A',
   /** Tinted green surface for subtle positive badges — never a page background. */
   primarySoft: '#E8F8F0',
+  /** Diagonal wash behind the open-matches banner. */
+  bannerTintTop: '#F2FBF6',
+  bannerTintBottom: '#D8F2E4',
   grassStripe: '#00A868',
   accent: '#F2C94C',
   accentDark: '#8A6D1A',

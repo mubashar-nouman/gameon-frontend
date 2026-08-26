@@ -1,7 +1,8 @@
 [
-  { "id": "football", "name": "Football", "emoji": "⚽", "icon": "football" },
   { "id": "cricket", "name": "Cricket", "emoji": "🏏", "icon": "tennisball" },
-  { "id": "badminton", "name": "Badminton", "emoji": "🏸", "icon": "fitness" },
+  { "id": "padel", "name": "Padel", "emoji": "🎾", "icon": "tennisball-outline" },
+  { "id": "football", "name": "Football", "emoji": "⚽", "icon": "football" },
+  { "id": "table-tennis", "name": "Table Tennis", "emoji": "🏓", "icon": "ellipse" },
   { "id": "basketball", "name": "Basketball", "emoji": "🏀", "icon": "basketball" },
-  { "id": "padel", "name": "Padel", "emoji": "🎾", "icon": "tennisball-outline" }
+  { "id": "badminton", "name": "Badminton", "emoji": "🏸", "icon": "fitness" }
 ]

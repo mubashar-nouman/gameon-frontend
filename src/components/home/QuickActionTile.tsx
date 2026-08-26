@@ -4,7 +4,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { colors } from '../../theme/colors';
 import { radius } from '../../theme/radius';
 import { spacing } from '../../theme/spacing';
-import { fontSize, fontWeight } from '../../theme/typography';
+import { fontSize, fontWeight, leading } from '../../theme/typography';
 
 type Props = {
   icon: keyof typeof Ionicons.glyphMap;
@@ -53,6 +53,6 @@ const styles = StyleSheet.create({
     fontSize: fontSize.footnote,
     fontWeight: fontWeight.medium,
     color: colors.text,
-    lineHeight: fontSize.footnote * 1.35,
+    lineHeight: leading(fontSize.footnote, 1.35),
   },
 });

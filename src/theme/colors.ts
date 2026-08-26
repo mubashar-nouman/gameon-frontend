@@ -12,11 +12,18 @@ export const colors = {
   white: '#FFFFFF',
   background: '#FFFFFF',
   /** Near-white page so soft card shadows read cleanly. */
-  pageBackground: '#F7F8F8',
+  pageBackground: '#F1F3F4',
   /** Hairline for search chips — not for cards. */
   borderSubtle: '#ECEEEF',
   /** Card outline — pairs with soft shadow for a clean edge on page bg. */
-  cardBorder: '#E6E8EA',
+  cardBorder: '#DFE3E6',
+  /** Strong card outline for the bordered treatment. */
+  cardBorderStrong: '#CBD2D7',
+  /** Very light top-to-bottom wash for gradient cards. */
+  /** Translucent white for strips sitting on a gradient card. */
+  surfaceOnCard: 'rgba(255,255,255,0.72)',
+  cardGradientTop: '#FFFFFF',
+  cardGradientBottom: '#E4F2EA',
   backgroundSecondary: '#F3F4F5',
   border: '#E5E7EB',
   text: '#111827',

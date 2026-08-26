@@ -1,7 +1,6 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import {
-  FlatList,
   Pressable,
   RefreshControl,
   ScrollView,
@@ -16,16 +15,17 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import ArenaCard from '../components/home/ArenaCard';
 import ArenaFilterSheet, { type SortOption } from '../components/home/ArenaFilterSheet';
 import HomeBannerCarousel from '../components/home/HomeBannerCarousel';
+import MatchInviteBanner from '../components/home/MatchInviteBanner';
 import LocationSheet from '../components/home/LocationSheet';
 import { locateNearestArea } from '../services/location';
-import OpenMatchCard from '../components/home/OpenMatchCard';
 import SectionHeader from '../components/home/SectionHeader';
 import SportSelector from '../components/home/SportSelector';
 import { FadeInView, Card } from '../components/ui';
 import {
-  areas,
   arenas,
+  cities,
   getArea,
+  getCity,
   isInArea,
   openMatches,
   sports,
@@ -50,7 +50,8 @@ export default function HomeScreen({ navigation }: Props) {
   const [sortBy, setSortBy] = useState<SortOption>('nearest');
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [locationOpen, setLocationOpen] = useState(false);
-  const [areaId, setAreaId] = useState('all');
+  const [cityId, setCityId] = useState(cities[0].id);
+  const [areaId, setAreaId] = useState(cities[0].areas[0].id);
   const [locating, setLocating] = useState(false);
   const [locateError, setLocateError] = useState<string | undefined>();
   const scrollRef = useRef<ScrollView>(null);
@@ -58,24 +59,42 @@ export default function HomeScreen({ navigation }: Props) {
 
   const selectedSport = sports.find((s) => s.id === selectedSportId);
 
-  const selectedArea = getArea(areaId);
+  const selectedCity = getCity(cityId);
+  const selectedArea = getArea(cityId, areaId);
+  /** True when the whole city is selected rather than one area. */
+  const wholeCity = (selectedArea?.matches.length ?? 0) === 0;
+  const locationLabel = wholeCity
+    ? selectedCity?.name
+    : `${selectedArea?.name}, ${selectedCity?.name}`;
 
   const visibleMatches = useMemo(
     () =>
       openMatches.filter(
         (match) =>
-          match.sportId === selectedSportId && isInArea(match.area, areaId),
+          match.sportId === selectedSportId &&
+          isInArea(match.area, cityId, areaId),
       ),
-    [selectedSportId, areaId],
+    [selectedSportId, cityId, areaId],
   );
 
-  /** Arenas per area for the counts shown in the picker. */
+  /** Distance to the arena hosting the closest open match, if we can match one. */
+  const nearestMatchKm = useMemo(() => {
+    const distances = visibleMatches
+      .map((match) => arenas.find((item) => item.area === match.area)?.distanceKm)
+      .filter((value): value is number => typeof value === 'number');
+
+    return distances.length > 0 ? Math.min(...distances) : undefined;
+  }, [visibleMatches]);
+
+  /** Arena count per "cityId:areaId", for the picker rows. */
   const areaCounts = useMemo(() => {
     const counts: Record<string, number> = {};
-    areas.forEach((area) => {
-      counts[area.id] = arenas.filter((arena) =>
-        isInArea(arena.area, area.id),
-      ).length;
+    cities.forEach((city) => {
+      city.areas.forEach((area) => {
+        counts[`${city.id}:${area.id}`] = arenas.filter((arena) =>
+          isInArea(arena.area, city.id, area.id),
+        ).length;
+      });
     });
     return counts;
   }, []);
@@ -83,7 +102,8 @@ export default function HomeScreen({ navigation }: Props) {
   const visibleArenas = useMemo(() => {
     const bySport = arenas.filter(
       (arena) =>
-        arena.sportId === selectedSportId && isInArea(arena.area, areaId),
+        arena.sportId === selectedSportId &&
+        isInArea(arena.area, cityId, areaId),
     );
     const q = query.trim().toLowerCase();
     const filtered = !q
@@ -99,7 +119,7 @@ export default function HomeScreen({ navigation }: Props) {
       if (sortBy === 'price') return a.pricePerHour - b.pricePerHour;
       return b.rating - a.rating;
     });
-  }, [selectedSportId, query, sortBy, areaId]);
+  }, [selectedSportId, query, sortBy, cityId, areaId]);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -130,8 +150,13 @@ export default function HomeScreen({ navigation }: Props) {
     const result = await locateNearestArea();
 
     if (result.status === 'success') {
+      setCityId(result.city.id);
       setAreaId(result.area.id);
       setLocationOpen(false);
+    } else if (result.status === 'out-of-range') {
+      setLocateError(
+        `We are not in your area yet — GameOn is live in ${result.nearestCity.name} only.`,
+      );
     } else if (result.status === 'denied') {
       setLocateError('Location permission denied. Pick an area below.');
     } else {
@@ -148,11 +173,13 @@ export default function HomeScreen({ navigation }: Props) {
       <View style={[styles.statusBarFill, { height: insets.top }]} />
       <LocationSheet
         visible={locationOpen}
-        selectedId={areaId}
+        cityId={cityId}
+        areaId={areaId}
         counts={areaCounts}
         onClose={() => setLocationOpen(false)}
-        onSelect={(id) => {
-          setAreaId(id);
+        onSelect={(nextCityId, nextAreaId) => {
+          setCityId(nextCityId);
+          setAreaId(nextAreaId);
           setLocationOpen(false);
         }}
         onUseCurrentLocation={handleUseCurrentLocation}
@@ -207,7 +234,7 @@ export default function HomeScreen({ navigation }: Props) {
             >
               <Ionicons name="location-sharp" size={12} color={colors.primary} />
               <Text style={styles.locationText} numberOfLines={1}>
-                {selectedArea?.name ?? user.location}
+                {locationLabel ?? user.location}
               </Text>
               <Ionicons name="chevron-down" size={11} color={colors.muted} />
             </Pressable>
@@ -274,47 +301,14 @@ export default function HomeScreen({ navigation }: Props) {
           />
         </FadeInView>
 
-        <FadeInView delay={40} style={styles.section}>
-          <SectionHeader
-            title="Open matches"
-            subtitle="Games near you that need players"
-            tone="social"
-            actionLabel="See all"
-            onActionPress={goToMatches}
+        <FadeInView delay={40} style={styles.matchesBanner}>
+          <MatchInviteBanner
+            matches={visibleMatches}
+            nearestKm={nearestMatchKm}
+            sportName={selectedSport?.name ?? ''}
+            areaLabel={wholeCity ? selectedCity?.name : selectedArea?.name}
+            onPress={goToMatches}
           />
-
-          {visibleMatches.length === 0 ? (
-            <Pressable
-              accessibilityRole="button"
-              onPress={goToMatches}
-              style={({ pressed }) => [styles.matchesEmptyWrap, pressed && styles.pressed]}
-            >
-              <Card variant="outline" style={styles.matchesEmpty}>
-                <Text style={styles.matchesEmptyEmoji}>{selectedSport?.emoji}</Text>
-                <View style={styles.matchesEmptyText}>
-                  <Text style={styles.matchesEmptyTitle}>
-                    No {selectedSport?.name.toLowerCase()} matches
-                    {areaId === 'all' ? ' yet' : ` in ${selectedArea?.shortName}`}
-                  </Text>
-                  <Text style={styles.matchesEmptyBody}>
-                    Tap + below to create one, or browse all matches
-                  </Text>
-                </View>
-                <Ionicons name="chevron-forward" size={16} color={colors.muted} />
-              </Card>
-            </Pressable>
-          ) : (
-            <FlatList
-              horizontal
-              data={visibleMatches}
-              keyExtractor={(item) => item.id}
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.carousel}
-              renderItem={({ item }) => (
-                <OpenMatchCard match={item} onJoin={goToMatches} />
-              )}
-            />
-          )}
         </FadeInView>
 
         <View
@@ -325,7 +319,13 @@ export default function HomeScreen({ navigation }: Props) {
           <FadeInView delay={80} style={styles.arenaSection}>
           <SectionHeader
             title="Nearby arenas"
-            subtitle="Courts and grounds around your area"
+            subtitle={
+              visibleArenas.length > 0
+                ? `${visibleArenas.length} ${
+                    visibleArenas.length === 1 ? 'ground' : 'grounds'
+                  } in ${wholeCity ? selectedCity?.name : selectedArea?.name}`
+                : 'Courts and grounds around your area'
+            }
             tone="brand"
             actionLabel={visibleArenas.length > 0 ? 'See all' : undefined}
           />
@@ -335,20 +335,18 @@ export default function HomeScreen({ navigation }: Props) {
               <Ionicons name="search-outline" size={22} color={colors.muted} />
               <Text style={styles.emptyTitle}>No arenas found</Text>
               <Text style={styles.emptyText}>
-                {areaId === 'all'
-                  ? 'Try another sport or clear your search.'
-                  : `No ${selectedSport?.name.toLowerCase()} arenas in ${
-                      selectedArea?.shortName
-                    }.`}
+                {`No ${selectedSport?.name.toLowerCase()} arenas in ${
+                  wholeCity ? selectedCity?.name : selectedArea?.name
+                }.`}
               </Text>
-              {areaId !== 'all' ? (
+              {!wholeCity ? (
                 <Pressable
                   accessibilityRole="button"
-                  onPress={() => setAreaId('all')}
+                  onPress={() => setAreaId(selectedCity?.areas[0].id ?? areaId)}
                   hitSlop={6}
                   style={({ pressed }) => [pressed && styles.pressed]}
                 >
-                  <Text style={styles.emptyAction}>Search all Lahore</Text>
+                  <Text style={styles.emptyAction}>Search all of {selectedCity?.name}</Text>
                 </Pressable>
               ) : null}
             </View>
@@ -470,6 +468,7 @@ const styles = StyleSheet.create({
   sports: { marginTop: spacing.lg },
   section: { marginTop: spacing.xl, gap: spacing.md },
   arenaSection: { marginTop: spacing.xl, gap: spacing.md },
+  matchesBanner: { marginTop: spacing['2xl'] },
   carousel: {
     paddingHorizontal: screenPadding,
     paddingVertical: spacing.xs,
@@ -477,27 +476,7 @@ const styles = StyleSheet.create({
   },
   arenaList: {
     paddingHorizontal: screenPadding,
-    gap: spacing.lg,
-  },
-  matchesEmptyWrap: {
-    marginHorizontal: screenPadding,
-  },
-  matchesEmpty: {
-    flexDirection: 'row',
-    alignItems: 'center',
     gap: spacing.md,
-    padding: spacing.md,
-  },
-  matchesEmptyEmoji: { fontSize: fontSize.sportEmoji },
-  matchesEmptyText: { flex: 1, gap: 2 },
-  matchesEmptyTitle: {
-    fontSize: fontSize.footnote,
-    fontWeight: fontWeight.semibold,
-    color: colors.text,
-  },
-  matchesEmptyBody: {
-    fontSize: fontSize.caption,
-    color: colors.muted,
   },
   empty: {
     paddingHorizontal: screenPadding,

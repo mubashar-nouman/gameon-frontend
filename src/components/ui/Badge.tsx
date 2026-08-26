@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { colors } from '../../theme/colors';
 import { radius } from '../../theme/radius';
 import { spacing } from '../../theme/spacing';
-import { fontSize, fontWeight } from '../../theme/typography';
+import { fontSize, fontWeight, leading } from '../../theme/typography';
 
 type Tone = 'neutral' | 'positive' | 'attention';
 
@@ -22,20 +22,23 @@ export default function Badge({ label, tone = 'neutral' }: Props) {
 
 const styles = StyleSheet.create({
   badge: {
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs,
-    borderRadius: radius.pill,
+    minHeight: 24,
+    justifyContent: 'center',
     alignSelf: 'flex-start',
+    paddingHorizontal: spacing.sm,
+    borderRadius: radius.pill,
   },
   label: {
     fontSize: fontSize.caption,
+    lineHeight: leading(fontSize.caption),
     fontWeight: fontWeight.medium,
+    textAlignVertical: 'center',
   },
 });
 
 const toneStyles = {
   neutral: StyleSheet.create({
-    container: { backgroundColor: colors.backgroundSecondary },
+    container: { backgroundColor: colors.pageBackground },
     label: { color: colors.muted },
   }),
   positive: StyleSheet.create({

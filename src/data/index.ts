@@ -5,7 +5,7 @@
  * there by hand and the app picks them up on reload. This module only attaches
  * types and joins records by `sportId`.
  */
-import areasJson from '../dummy-data/home-areas.json';
+import citiesJson from '../dummy-data/home-cities.json';
 import arenasJson from '../dummy-data/home-arenas.json';
 import bookingDatesJson from './json/bookingDates.json';
 import bookingsJson from './json/bookings.json';
@@ -76,14 +76,21 @@ export type BookingDate = {
 export type Area = {
   id: string;
   name: string;
-  shortName: string;
-  /** Area-name prefixes that belong to this area; empty means "everywhere". */
+  /** Area-name prefixes that belong to this area; empty means the whole city. */
   matches: string[];
-  /** Approximate centre, used to resolve a GPS fix to the nearest area. */
-  lat?: number;
-  lng?: number;
+  lat: number;
+  lng: number;
 };
 
+export type City = {
+  id: string;
+  name: string;
+  lat: number;
+  lng: number;
+  /** Cities we have not launched in yet are shown but not selectable. */
+  enabled: boolean;
+  areas: Area[];
+};
 export type User = {
   id: string;
   firstName: string;
@@ -95,20 +102,53 @@ export type User = {
 export const sports: Sport[] = sportsJson;
 export const arenas: Arena[] = arenasJson;
 export const openMatches: OpenMatch[] = openMatchesJson;
-export const areas: Area[] = areasJson;
+export const cities: City[] = citiesJson;
 export const user: User = userJson;
 export const bookings: Booking[] = bookingsJson;
 export const slots: Slot[] = slotsJson;
 export const bookingDates: BookingDate[] = bookingDatesJson;
 
-export function getArea(areaId: string): Area | undefined {
-  return areas.find((area) => area.id === areaId);
+export function getCity(cityId: string): City | undefined {
+  return cities.find((city) => city.id === cityId);
 }
 
-/** True when a record's area string belongs to the selected area. */
-export function isInArea(recordArea: string, areaId: string): boolean {
-  const area = getArea(areaId);
+export function getArea(cityId: string, areaId: string): Area | undefined {
+  return getCity(cityId)?.areas.find((area) => area.id === areaId);
+}
+
+/**
+ * Every area we can actually send a user to. Disabled cities are excluded so a
+ * GPS fix never lands somewhere the picker will not let them select.
+ */
+export function allAreas(): { city: City; area: Area }[] {
+  return cities
+    .filter((city) => city.enabled)
+    .flatMap((city) =>
+    city.areas
+      // "All areas" carries the city centre, so it is not a real destination.
+      .filter((area) => area.matches.length > 0)
+      .map((area) => ({ city, area })),
+  );
+}
+
+/**
+ * True when a record belongs to the selected city, and to the selected area
+ * within it. An area with no prefixes matches the whole city.
+ */
+export function isInArea(
+  recordArea: string,
+  cityId: string,
+  areaId: string,
+): boolean {
+  const city = getCity(cityId);
+  if (!city) return true;
+
+  // Records are stored as "<Area>, <City>".
+  if (!recordArea.endsWith(city.name)) return false;
+
+  const area = getArea(cityId, areaId);
   if (!area || area.matches.length === 0) return true;
+
   return area.matches.some((prefix) => recordArea.startsWith(prefix));
 }
 

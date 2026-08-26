@@ -16,7 +16,7 @@ import { Button } from '../components/ui';
 import { colors } from '../theme/colors';
 import { screenPadding, spacing } from '../theme/spacing';
 import { duration, easing, translate } from '../theme/motion';
-import { fontFamily, fontSize, fontWeight } from '../theme/typography';
+import { fontFamily, fontSize, fontWeight, leading } from '../theme/typography';
 
 type Props = {
   /** Called when the user chooses to continue into the app. */
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
   headline: {
     fontFamily: fontFamily.display,
     fontSize: fontSize.display,
-    lineHeight: fontSize.display * 1.2,
+    lineHeight: leading(fontSize.display, 1.2),
     color: colors.white,
   },
   headlineAccent: { color: colors.primary },
@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
     marginTop: spacing.lg,
     fontSize: fontSize.bodyLarge,
     fontWeight: fontWeight.regular,
-    lineHeight: fontSize.bodyLarge * 1.5,
+    lineHeight: leading(fontSize.bodyLarge, 1.5),
     color: colors.onDarkMuted,
   },
   dots: {

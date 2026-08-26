@@ -42,3 +42,16 @@ export const lineHeight = {
   normal: 1.4,
   relaxed: 1.5,
 } as const;
+
+/**
+ * Line height in whole pixels. Two things clip descenders otherwise:
+ * fractional values (13 * 1.4 = 18.2) round inconsistently across platforms,
+ * and a ratio below ~1.5 leaves no room under the baseline at small sizes.
+ * Defaults to the relaxed ratio for that reason.
+ */
+export function leading(
+  size: number,
+  ratio: number = lineHeight.relaxed,
+): number {
+  return Math.round(size * ratio);
+}

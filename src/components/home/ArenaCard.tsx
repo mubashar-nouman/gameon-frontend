@@ -1,21 +1,15 @@
 import { Ionicons } from '@expo/vector-icons';
-import {
-  Image,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import SportArt from '../art/SportArt';
 import { getArenaImage } from '../../data/arenaImages';
 import Card from '../ui/Card';
-import { formatPkr, getSport, type Arena } from '../../data';
+import { formatPkr, type Arena } from '../../data';
 import { colors } from '../../theme/colors';
 import { elevation } from '../../theme/elevation';
 import { radius } from '../../theme/radius';
 import { spacing } from '../../theme/spacing';
-import { fontSize, fontWeight } from '../../theme/typography';
+import { fontSize, fontWeight, leading } from '../../theme/typography';
 
 type Props = {
   arena: Arena;
@@ -24,54 +18,38 @@ type Props = {
   onToggleSave?: () => void;
 };
 
+const IMAGE_SIZE = 104;
+
 export default function ArenaCard({
   arena,
   saved = false,
   onPress,
   onToggleSave,
 }: Props) {
-  const sport = getSport(arena.sportId);
-  // Derive a stable variant from the arena id so a given arena always shows
-  // the same photo, while neighbouring cards differ.
+  // Stable variant from the arena id so a given arena always shows the same
+  // photo, while neighbouring cards differ.
   const variant = Number(arena.id.replace(/\D/g, '')) || 0;
   const photo = getArenaImage(arena.sportId, variant);
 
   return (
-    <Card style={styles.card}>
+    <Card variant="outline" style={styles.card}>
       <Pressable
         accessibilityRole="button"
+        accessibilityLabel={`${arena.name}, ${arena.area}`}
         onPress={onPress}
-        style={({ pressed }) => [pressed && styles.pressed]}
+        style={({ pressed }) => [styles.row, pressed && styles.pressed]}
       >
-        <View style={styles.imageWrap}>
+        <View style={styles.media}>
           {photo ? (
             <Image source={photo} style={styles.art} resizeMode="cover" />
           ) : (
-            <SportArt
-              sportId={arena.sportId}
-              style={styles.art}
-              radius={radius.card}
-            />
+            <SportArt sportId={arena.sportId} style={styles.art} />
           )}
 
-          <View style={styles.distancePill}>
-            <Ionicons name="navigate-outline" size={11} color={colors.text} />
-            <Text style={styles.distanceText}>{arena.distanceKm} km</Text>
+          <View style={styles.ratingPill}>
+            <Ionicons name="star" size={10} color={colors.accent} />
+            <Text style={styles.ratingText}>{arena.rating.toFixed(1)}</Text>
           </View>
-
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel={saved ? 'Remove from saved' : 'Save arena'}
-            hitSlop={8}
-            onPress={onToggleSave}
-            style={styles.saveBtn}
-          >
-            <Ionicons
-              name={saved ? 'heart' : 'heart-outline'}
-              size={17}
-              color={saved ? colors.primary : colors.text}
-            />
-          </Pressable>
         </View>
 
         <View style={styles.body}>
@@ -79,45 +57,42 @@ export default function ArenaCard({
             <Text style={styles.name} numberOfLines={1}>
               {arena.name}
             </Text>
-            {sport ? (
-              <View style={styles.sportPill}>
-                <Text style={styles.sportEmoji}>{sport.emoji}</Text>
-                <Text style={styles.sportName}>{sport.name}</Text>
-              </View>
-            ) : null}
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={saved ? 'Remove from saved' : 'Save arena'}
+              hitSlop={10}
+              onPress={onToggleSave}
+            >
+              <Ionicons
+                name={saved ? 'heart' : 'heart-outline'}
+                size={18}
+                color={saved ? colors.primary : colors.muted}
+              />
+            </Pressable>
           </View>
 
-          <Text style={styles.area} numberOfLines={1}>
-            {arena.area}
+          <Text style={styles.meta} numberOfLines={1}>
+            {arena.area} · {arena.distanceKm} km
           </Text>
 
-          <View style={styles.statsRow}>
-            <View style={styles.rating}>
-              <Ionicons name="star" size={12} color={colors.text} />
-              <Text style={styles.ratingText}>{arena.rating.toFixed(1)}</Text>
-              <Text style={styles.reviews}>({arena.reviewCount})</Text>
+          <View style={styles.tagRow}>
+            <View style={styles.tag}>
+              <View style={styles.liveDot} />
+              <Text style={styles.tagText}>{arena.activeWindow}</Text>
             </View>
-
             <Text style={styles.grounds}>
               {arena.grounds} {arena.grounds === 1 ? 'ground' : 'grounds'}
             </Text>
-
-            <Text style={styles.price}>
-              {formatPkr(arena.pricePerHour)}
-              <Text style={styles.perHour}>/hr</Text>
-            </Text>
           </View>
 
-          <View style={styles.footer}>
-            <View style={styles.slotPill}>
-              <Ionicons name="time-outline" size={12} color={colors.primaryDark} />
-              <Text style={styles.slotText}>{arena.activeWindow}</Text>
+          <View style={styles.priceRow}>
+            <Text style={styles.price}>
+              {formatPkr(arena.pricePerHour)}
+              <Text style={styles.perHour}> / hr</Text>
+            </Text>
+            <View style={styles.bookBtn}>
+              <Text style={styles.bookText}>Book</Text>
             </View>
-            {arena.facilities[0] ? (
-              <Text style={styles.facility} numberOfLines={1}>
-                {arena.facilities.slice(0, 2).join(' · ')}
-              </Text>
-            ) : null}
           </View>
         </View>
       </Pressable>
@@ -125,145 +100,119 @@ export default function ArenaCard({
   );
 }
 
-const IMAGE_HEIGHT = 112;
-
 const styles = StyleSheet.create({
   card: { width: '100%' },
-  pressed: { backgroundColor: colors.backgroundSecondary },
-  imageWrap: {
-    height: IMAGE_HEIGHT,
-    backgroundColor: colors.backgroundSecondary,
+  pressed: { opacity: 0.9 },
+  row: { flexDirection: 'row', padding: spacing.md, gap: spacing.md },
+
+  media: { width: IMAGE_SIZE, height: IMAGE_SIZE },
+  art: {
+    width: IMAGE_SIZE,
+    height: IMAGE_SIZE,
+    borderRadius: radius.md,
   },
-  art: { width: '100%', height: IMAGE_HEIGHT },
-  distancePill: {
+  ratingPill: {
     position: 'absolute',
-    top: spacing.sm,
-    left: spacing.sm,
+    left: spacing.xs,
+    bottom: spacing.xs,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 3,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: 4,
-    borderRadius: radius.pill,
-    backgroundColor: colors.white,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: colors.cardBorder,
-    ...elevation.soft,
-  },
-  distanceText: {
-    fontSize: fontSize.caption,
-    fontWeight: fontWeight.semibold,
-    color: colors.text,
-  },
-  sportPill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
+    gap: 2,
     paddingHorizontal: spacing.sm,
     paddingVertical: 3,
     borderRadius: radius.pill,
-    backgroundColor: colors.primarySoft,
-    borderWidth: 1,
-    borderColor: colors.primary,
-  },
-  sportEmoji: { fontSize: fontSize.caption },
-  sportName: {
-    fontSize: fontSize.caption,
-    fontWeight: fontWeight.semibold,
-    color: colors.primaryDark,
-  },
-  saveBtn: {
-    position: 'absolute',
-    top: spacing.sm,
-    right: spacing.sm,
-    width: 34,
-    height: 34,
-    borderRadius: 17,
     backgroundColor: colors.white,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: colors.cardBorder,
-    alignItems: 'center',
-    justifyContent: 'center',
     ...elevation.soft,
   },
-  body: {
-    padding: spacing.md,
-    gap: spacing.xs,
+  ratingText: {
+    fontSize: fontSize.caption,
+    lineHeight: leading(fontSize.caption),
+    fontWeight: fontWeight.bold,
+    color: colors.text,
   },
+
+  body: { flex: 1, justifyContent: 'space-between' },
   titleRow: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     gap: spacing.sm,
   },
   name: {
     flex: 1,
-    fontSize: fontSize.body,
-    fontWeight: fontWeight.semibold,
+    fontSize: fontSize.bodyLarge,
+    lineHeight: leading(fontSize.bodyLarge, 1.3),
+    fontWeight: fontWeight.bold,
     color: colors.text,
   },
-  area: {
+  meta: {
+    marginTop: 2,
     fontSize: fontSize.caption,
+    lineHeight: leading(fontSize.caption),
     color: colors.muted,
   },
-  statsRow: {
-    marginTop: spacing.xs,
+
+  tagRow: {
+    marginTop: spacing.sm,
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,
   },
-  rating: {
+  tag: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 3,
+    gap: spacing.xs,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 3,
+    borderRadius: radius.sm,
+    backgroundColor: colors.primarySoft,
   },
-  ratingText: {
+  liveDot: {
+    width: 5,
+    height: 5,
+    // Half of width/height — a circle, not a radius-token value.
+    borderRadius: 2.5,
+    backgroundColor: colors.primary,
+  },
+  tagText: {
     fontSize: fontSize.caption,
+    lineHeight: leading(fontSize.caption),
     fontWeight: fontWeight.semibold,
-    color: colors.text,
-  },
-  reviews: {
-    fontSize: fontSize.caption,
-    color: colors.muted,
+    color: colors.primaryDark,
   },
   grounds: {
-    flex: 1,
     fontSize: fontSize.caption,
+    lineHeight: leading(fontSize.caption),
     color: colors.muted,
   },
-  price: {
-    fontSize: fontSize.footnote,
-    fontWeight: fontWeight.semibold,
-    color: colors.primary,
-  },
-  perHour: {
-    fontWeight: fontWeight.regular,
-    color: colors.muted,
-  },
-  footer: {
+
+  priceRow: {
     marginTop: spacing.sm,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     gap: spacing.sm,
   },
-  slotPill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: 5,
-    borderRadius: radius.sm,
-    backgroundColor: colors.primarySoft,
+  price: {
+    fontSize: fontSize.callout,
+    lineHeight: leading(fontSize.callout, 1.3),
+    fontWeight: fontWeight.bold,
+    color: colors.text,
   },
-  slotText: {
+  perHour: {
     fontSize: fontSize.caption,
-    fontWeight: fontWeight.medium,
-    color: colors.primaryDark,
-  },
-  facility: {
-    flex: 1,
-    fontSize: fontSize.caption,
+    fontWeight: fontWeight.regular,
     color: colors.muted,
-    textAlign: 'right',
+  },
+  bookBtn: {
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.sm,
+    borderRadius: radius.pill,
+    backgroundColor: colors.primary,
+  },
+  bookText: {
+    fontSize: fontSize.caption,
+    lineHeight: leading(fontSize.caption),
+    fontWeight: fontWeight.bold,
+    color: colors.white,
   },
 });

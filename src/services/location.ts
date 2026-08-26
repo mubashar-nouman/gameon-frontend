@@ -1,13 +1,20 @@
 import * as Location from 'expo-location';
 
-import { areas, type Area } from '../data';
+import { allAreas, type Area, type City } from '../data';
 
 export type LocateResult =
-  | { status: 'success'; area: Area; distanceKm: number }
+  | { status: 'success'; city: City; area: Area; distanceKm: number }
+  | { status: 'out-of-range'; nearestCity: City; distanceKm: number }
   | { status: 'denied' }
   | { status: 'unavailable' };
 
 const EARTH_RADIUS_KM = 6371;
+
+/**
+ * Beyond this, the nearest launched area is not plausibly "where you are", so
+ * we say so instead of silently dropping the user in another city.
+ */
+const MAX_MATCH_KM = 60;
 
 function toRadians(value: number): number {
   return (value * Math.PI) / 180;
@@ -30,30 +37,26 @@ export function distanceKm(
   return EARTH_RADIUS_KM * 2 * Math.asin(Math.sqrt(a));
 }
 
-/** Closest area with coordinates to the given point. */
+/** Closest area across every city to the given point. */
 export function nearestArea(
   lat: number,
   lng: number,
-): { area: Area; distanceKm: number } | undefined {
-  const located = areas.filter(
-    (area): area is Area & { lat: number; lng: number } =>
-      typeof area.lat === 'number' && typeof area.lng === 'number',
-  );
+): { city: City; area: Area; distanceKm: number } | undefined {
+  const candidates = allAreas();
+  if (candidates.length === 0) return undefined;
 
-  if (located.length === 0) return undefined;
+  let best = candidates[0];
+  let bestDistance = distanceKm(lat, lng, best.area.lat, best.area.lng);
 
-  let best = located[0];
-  let bestDistance = distanceKm(lat, lng, best.lat, best.lng);
-
-  located.slice(1).forEach((area) => {
-    const d = distanceKm(lat, lng, area.lat, area.lng);
+  candidates.slice(1).forEach((candidate) => {
+    const d = distanceKm(lat, lng, candidate.area.lat, candidate.area.lng);
     if (d < bestDistance) {
-      best = area;
+      best = candidate;
       bestDistance = d;
     }
   });
 
-  return { area: best, distanceKm: bestDistance };
+  return { city: best.city, area: best.area, distanceKm: bestDistance };
 }
 
 /**
@@ -78,8 +81,17 @@ export async function locateNearestArea(): Promise<LocateResult> {
 
     if (!match) return { status: 'unavailable' };
 
+    if (match.distanceKm > MAX_MATCH_KM) {
+      return {
+        status: 'out-of-range',
+        nearestCity: match.city,
+        distanceKm: match.distanceKm,
+      };
+    }
+
     return {
       status: 'success',
+      city: match.city,
       area: match.area,
       distanceKm: match.distanceKm,
     };

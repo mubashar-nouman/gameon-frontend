@@ -1,48 +1,37 @@
+import { Ionicons } from '@expo/vector-icons';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { colors } from '../../theme/colors';
-import { radius } from '../../theme/radius';
 import { screenPadding, spacing } from '../../theme/spacing';
-import { fontSize, fontWeight, lineHeight } from '../../theme/typography';
-
-type Tone = 'brand' | 'social';
+import { fontSize, fontWeight, leading } from '../../theme/typography';
 
 type Props = {
   title: string;
   subtitle?: string;
+  /** Accent used for the leading rule. */
+  tone?: 'brand' | 'social';
   actionLabel?: string;
   onActionPress?: () => void;
-  /** `brand` = booking green · `social` = warm gold for matches */
-  tone?: Tone;
 };
-
-const toneStyles = {
-  brand: {
-    accent: colors.primary,
-    action: colors.primary,
-  },
-  social: {
-    accent: colors.accent,
-    action: colors.accentDark,
-  },
-} as const;
 
 export default function SectionHeader({
   title,
   subtitle,
+  tone = 'brand',
   actionLabel,
   onActionPress,
-  tone = 'brand',
 }: Props) {
-  const palette = toneStyles[tone];
-
   return (
     <View style={styles.row}>
-      <View style={styles.leading}>
-        <View style={styles.titleRow}>
-          <View style={[styles.accent, { backgroundColor: palette.accent }]} />
-          <Text style={styles.title}>{title}</Text>
-        </View>
+      <View
+        style={[
+          styles.rule,
+          tone === 'social' ? styles.ruleSocial : styles.ruleBrand,
+        ]}
+      />
+
+      <View style={styles.text}>
+        <Text style={styles.title}>{title}</Text>
         {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
       </View>
 
@@ -50,60 +39,51 @@ export default function SectionHeader({
         <Pressable
           accessibilityRole="button"
           onPress={onActionPress}
-          style={({ pressed }) => [styles.actionBtn, pressed && styles.pressed]}
+          hitSlop={6}
+          style={({ pressed }) => [styles.action, pressed && styles.pressed]}
         >
-          <Text style={[styles.action, { color: palette.action }]}>{actionLabel}</Text>
+          <Text style={styles.actionText}>{actionLabel}</Text>
+          <Ionicons name="chevron-forward" size={15} color={colors.primary} />
         </Pressable>
       ) : null}
     </View>
   );
 }
 
-const ACCENT_WIDTH = 3;
-
 const styles = StyleSheet.create({
   row: {
-    paddingHorizontal: screenPadding,
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    justifyContent: 'space-between',
-    gap: spacing.md,
-  },
-  leading: {
-    flex: 1,
-    gap: spacing.xs,
-  },
-  titleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.sm,
+    gap: spacing.md,
+    paddingHorizontal: screenPadding,
   },
-  accent: {
-    width: ACCENT_WIDTH,
-    height: 20,
-    borderRadius: radius.pill,
+  rule: {
+    width: 3,
+    alignSelf: 'stretch',
+    minHeight: 28,
+    borderRadius: 2,
   },
+  ruleBrand: { backgroundColor: colors.primary },
+  ruleSocial: { backgroundColor: colors.accent },
+  text: { flex: 1 },
   title: {
-    flex: 1,
     fontSize: fontSize.sectionTitle,
+    lineHeight: leading(fontSize.sectionTitle, 1.3),
     fontWeight: fontWeight.bold,
     color: colors.text,
-    letterSpacing: -0.3,
   },
   subtitle: {
-    paddingLeft: ACCENT_WIDTH + spacing.sm,
+    marginTop: spacing.xs,
     fontSize: fontSize.caption,
-    fontWeight: fontWeight.regular,
+    lineHeight: leading(fontSize.caption),
     color: colors.muted,
-    lineHeight: fontSize.sectionTitle * lineHeight.tight,
   },
-  actionBtn: {
-    paddingTop: 4,
-  },
-  action: {
-    fontSize: fontSize.footnote,
-    fontWeight: fontWeight.semibold,
-    textDecorationLine: 'underline',
-  },
+  action: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs },
   pressed: { opacity: 0.6 },
+  actionText: {
+    fontSize: fontSize.footnote,
+    lineHeight: leading(fontSize.footnote),
+    fontWeight: fontWeight.semibold,
+    color: colors.primary,
+  },
 });

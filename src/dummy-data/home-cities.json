@@ -1,0 +1,219 @@
+[
+  {
+    "id": "lahore",
+    "name": "Lahore",
+    "lat": 31.5204,
+    "lng": 74.3587,
+    "areas": [
+      {
+        "id": "lhr-all",
+        "name": "All areas",
+        "matches": [],
+        "lat": 31.5204,
+        "lng": 74.3587
+      },
+      {
+        "id": "dha",
+        "name": "DHA",
+        "matches": [
+          "DHA"
+        ],
+        "lat": 31.475,
+        "lng": 74.41
+      },
+      {
+        "id": "gulberg",
+        "name": "Gulberg",
+        "matches": [
+          "Gulberg"
+        ],
+        "lat": 31.51,
+        "lng": 74.345
+      },
+      {
+        "id": "johar-town",
+        "name": "Johar Town",
+        "matches": [
+          "Johar Town"
+        ],
+        "lat": 31.47,
+        "lng": 74.28
+      },
+      {
+        "id": "model-town",
+        "name": "Model Town",
+        "matches": [
+          "Model Town"
+        ],
+        "lat": 31.485,
+        "lng": 74.325
+      },
+      {
+        "id": "bahria-town",
+        "name": "Bahria Town",
+        "matches": [
+          "Bahria Town"
+        ],
+        "lat": 31.365,
+        "lng": 74.185
+      },
+      {
+        "id": "cantt",
+        "name": "Cantt",
+        "matches": [
+          "Cantt"
+        ],
+        "lat": 31.53,
+        "lng": 74.39
+      },
+      {
+        "id": "iqbal-town",
+        "name": "Allama Iqbal Town",
+        "matches": [
+          "Allama Iqbal Town"
+        ],
+        "lat": 31.51,
+        "lng": 74.28
+      }
+    ],
+    "enabled": true
+  },
+  {
+    "id": "karachi",
+    "name": "Karachi",
+    "lat": 24.8607,
+    "lng": 67.0011,
+    "areas": [
+      {
+        "id": "khi-all",
+        "name": "All areas",
+        "matches": [],
+        "lat": 24.8607,
+        "lng": 67.0011
+      },
+      {
+        "id": "khi-dha",
+        "name": "DHA Karachi",
+        "matches": [
+          "DHA Karachi"
+        ],
+        "lat": 24.8008,
+        "lng": 67.0621
+      },
+      {
+        "id": "clifton",
+        "name": "Clifton",
+        "matches": [
+          "Clifton"
+        ],
+        "lat": 24.8138,
+        "lng": 67.03
+      },
+      {
+        "id": "gulshan",
+        "name": "Gulshan-e-Iqbal",
+        "matches": [
+          "Gulshan"
+        ],
+        "lat": 24.9204,
+        "lng": 67.0971
+      },
+      {
+        "id": "north-nazimabad",
+        "name": "North Nazimabad",
+        "matches": [
+          "North Nazimabad"
+        ],
+        "lat": 24.9342,
+        "lng": 67.0362
+      }
+    ],
+    "enabled": false
+  },
+  {
+    "id": "islamabad",
+    "name": "Islamabad",
+    "lat": 33.6844,
+    "lng": 73.0479,
+    "areas": [
+      {
+        "id": "isb-all",
+        "name": "All areas",
+        "matches": [],
+        "lat": 33.6844,
+        "lng": 73.0479
+      },
+      {
+        "id": "f-sectors",
+        "name": "F Sectors",
+        "matches": [
+          "F-"
+        ],
+        "lat": 33.71,
+        "lng": 73.055
+      },
+      {
+        "id": "g-sectors",
+        "name": "G Sectors",
+        "matches": [
+          "G-"
+        ],
+        "lat": 33.695,
+        "lng": 73.04
+      },
+      {
+        "id": "bahria-isb",
+        "name": "Bahria Town Islamabad",
+        "matches": [
+          "Bahria Town Islamabad"
+        ],
+        "lat": 33.53,
+        "lng": 73.1
+      },
+      {
+        "id": "dha-isb",
+        "name": "DHA Islamabad",
+        "matches": [
+          "DHA Islamabad"
+        ],
+        "lat": 33.54,
+        "lng": 73.15
+      }
+    ],
+    "enabled": false
+  },
+  {
+    "id": "faisalabad",
+    "name": "Faisalabad",
+    "lat": 31.4504,
+    "lng": 73.135,
+    "areas": [
+      {
+        "id": "fsd-all",
+        "name": "All areas",
+        "matches": [],
+        "lat": 31.4504,
+        "lng": 73.135
+      },
+      {
+        "id": "peoples-colony",
+        "name": "Peoples Colony",
+        "matches": [
+          "Peoples Colony"
+        ],
+        "lat": 31.42,
+        "lng": 73.11
+      },
+      {
+        "id": "madina-town",
+        "name": "Madina Town",
+        "matches": [
+          "Madina Town"
+        ],
+        "lat": 31.41,
+        "lng": 73.12
+      }
+    ],
+    "enabled": false
+  }
+]

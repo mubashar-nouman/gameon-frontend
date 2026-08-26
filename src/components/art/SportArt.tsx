@@ -40,6 +40,7 @@ export default function SportArt({ sportId, style, radius = 0, square = false }:
         {sportId === 'cricket' ? <CricketArt /> : null}
         {sportId === 'badminton' ? <BadmintonArt /> : null}
         {sportId === 'basketball' ? <BasketballArt /> : null}
+        {sportId === 'table-tennis' ? <TableTennisArt /> : null}
         {sportId === 'padel' ? <TennisArt /> : null}
         {sportId === 'football' ? <FootballArt /> : null}
       </Svg>
@@ -116,6 +117,47 @@ function BadmintonArt() {
       {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => (
         <Line key={i} x1={40 + i * 34} y1="86" x2={40 + i * 34} y2="94" stroke="#FFFFFF" strokeWidth="1" opacity={0.5} />
       ))}
+    </G>
+  );
+}
+
+function TableTennisArt() {
+  return (
+    <G>
+      <Defs>
+        <LinearGradient id="tt" x1="0" y1="0" x2="0" y2="1">
+          <Stop offset="0" stopColor={court.light} />
+          <Stop offset="1" stopColor={court.dark} />
+        </LinearGradient>
+      </Defs>
+      <Rect x="0" y="0" width="320" height="180" fill="url(#tt)" />
+      {/* Table surface in perspective */}
+      <Path d="M52 54 L268 54 L308 156 L12 156 Z" fill={court.mid} opacity={0.85} />
+      <Path
+        d="M52 54 L268 54 L308 156 L12 156 Z"
+        stroke="#FFFFFF"
+        strokeWidth="2"
+        fill="none"
+        opacity={0.6}
+      />
+      {/* Centre line down the length of the table */}
+      <Line x1="160" y1="54" x2="160" y2="156" stroke="#FFFFFF" strokeWidth="1.5" opacity={0.45} />
+      {/* Net across the middle */}
+      <Line x1="38" y1="105" x2="282" y2="105" stroke="#FFFFFF" strokeWidth="2.5" opacity={0.8} />
+      {Array.from({ length: 14 }).map((_, i) => (
+        <Line
+          key={i}
+          x1={40 + i * 18}
+          y1="97"
+          x2={40 + i * 18}
+          y2="105"
+          stroke="#FFFFFF"
+          strokeWidth="1"
+          opacity={0.4}
+        />
+      ))}
+      {/* Ball */}
+      <Circle cx="212" cy="82" r="6" fill="#FFFFFF" opacity={0.9} />
     </G>
   );
 }

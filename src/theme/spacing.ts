@@ -10,4 +10,5 @@ export const spacing = {
   '4xl': 40,
 } as const;
 
-export const screenPadding = spacing['2xl'];
+/** Horizontal gutter on every screen. Keep edits here — never per-screen. */
+export const screenPadding = spacing.lg;

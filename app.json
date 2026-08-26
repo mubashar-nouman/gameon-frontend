@@ -32,7 +32,13 @@
         }
       ],
       "expo-status-bar",
-      "expo-font"
+      "expo-font",
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow GameOn to use your location to show arenas and matches near you."
+        }
+      ]
     ],
     "androidStatusBar": {
       "barStyle": "dark-content",

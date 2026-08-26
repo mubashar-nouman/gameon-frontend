@@ -174,7 +174,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  body: { padding: screenPadding },
+  body: {
+    paddingHorizontal: screenPadding,
+    paddingVertical: spacing.xl,
+  },
   name: {
     fontSize: fontSize.screenTitle,
     fontWeight: fontWeight.bold,
@@ -288,7 +291,8 @@ const styles = StyleSheet.create({
   cta: { flex: 1, maxWidth: 200 },
   missing: {
     flex: 1,
-    padding: screenPadding,
+    paddingHorizontal: screenPadding,
+    paddingVertical: spacing.xl,
     gap: spacing.lg,
     justifyContent: 'center',
   },

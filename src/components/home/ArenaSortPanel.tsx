@@ -22,7 +22,7 @@ type Props = {
 export default function ArenaSortPanel({ value, onChange }: Props) {
   return (
     <View style={styles.panel}>
-      <Text style={styles.label}>Sort arenas by</Text>
+      <Text style={styles.label}>Sort by</Text>
       {OPTIONS.map((option, index) => {
         const selected = option.key === value;
         return (

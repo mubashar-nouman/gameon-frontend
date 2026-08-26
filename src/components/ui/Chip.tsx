@@ -39,11 +39,11 @@ export default function Chip({ label, selected = false, icon, onPress }: Props) 
 
 const styles = StyleSheet.create({
   chip: {
-    height: 40,
+    height: 34,
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,
-    paddingHorizontal: spacing.lg,
+    paddingHorizontal: spacing.md,
     borderRadius: radius.sm,
     borderWidth: 1,
     borderColor: colors.border,

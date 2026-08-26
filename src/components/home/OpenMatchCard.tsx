@@ -50,14 +50,11 @@ export default function OpenMatchCard({
             <View style={[styles.progressFill, { flex: fill }]} />
             <View style={{ flex: 1 - fill }} />
           </View>
-          <Text style={styles.count}>
+          <Text style={styles.count} numberOfLines={1}>
             {match.playersJoined}/{match.playersNeeded}
+            {spotsLeft > 0 ? ` · ${spotsLeft} left` : ' · Full'}
           </Text>
         </View>
-
-        <Text style={styles.spots}>
-          {spotsLeft > 0 ? `${spotsLeft} spots open` : 'Match is full'}
-        </Text>
 
         <Pressable
           accessibilityRole="button"
@@ -72,33 +69,35 @@ export default function OpenMatchCard({
 }
 
 const styles = StyleSheet.create({
-  shell: { width: 220 },
+  shell: { width: 248 },
   shellWide: { width: '100%' },
   body: {
-    padding: spacing.md,
-    gap: 3,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.sm,
+    gap: 2,
   },
   top: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     gap: spacing.sm,
-    marginBottom: spacing.xs,
   },
   sportPill: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: 3,
+    gap: 3,
+    paddingHorizontal: 7,
+    paddingVertical: 2,
     borderRadius: radius.pill,
-    backgroundColor: colors.primarySoft,
+    backgroundColor: colors.accentSoft,
+    borderWidth: 1,
+    borderColor: colors.accentBorder,
   },
-  sportEmoji: { fontSize: 12 },
+  sportEmoji: { fontSize: fontSize.caption },
   sportName: {
     fontSize: fontSize.caption,
-    fontWeight: fontWeight.medium,
-    color: colors.primaryDark,
+    fontWeight: fontWeight.semibold,
+    color: colors.accentDark,
   },
   time: {
     flex: 1,
@@ -108,54 +107,49 @@ const styles = StyleSheet.create({
     color: colors.muted,
   },
   title: {
-    fontSize: fontSize.footnote,
+    fontSize: fontSize.bodyLarge,
     fontWeight: fontWeight.semibold,
     color: colors.text,
   },
   meta: {
-    fontSize: fontSize.caption,
+    fontSize: fontSize.footnote,
     color: colors.muted,
   },
   progressRow: {
-    marginTop: spacing.sm,
+    marginTop: spacing.xs,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.sm,
+    gap: spacing.xs,
   },
   progressTrack: {
     flex: 1,
-    height: 4,
+    height: 3,
     borderRadius: radius.pill,
-    backgroundColor: colors.backgroundSecondary,
+    backgroundColor: colors.accentSoft,
     flexDirection: 'row',
     overflow: 'hidden',
   },
   progressFill: {
-    backgroundColor: colors.primary,
+    backgroundColor: colors.accent,
     borderRadius: radius.pill,
   },
   count: {
     fontSize: fontSize.caption,
     fontWeight: fontWeight.semibold,
-    color: colors.primaryDark,
-  },
-  spots: {
-    marginTop: 2,
-    fontSize: fontSize.caption,
-    fontWeight: fontWeight.medium,
-    color: colors.muted,
+    color: colors.accentDark,
+    maxWidth: 72,
   },
   joinBtn: {
-    marginTop: spacing.sm,
+    marginTop: spacing.xs,
     height: 32,
-    borderRadius: radius.md,
+    borderRadius: radius.sm,
     backgroundColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
   },
   joinPressed: { backgroundColor: colors.primaryDark },
   joinText: {
-    fontSize: fontSize.caption,
+    fontSize: fontSize.footnote,
     fontWeight: fontWeight.semibold,
     color: colors.white,
   },

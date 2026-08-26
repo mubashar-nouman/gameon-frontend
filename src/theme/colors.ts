@@ -7,6 +7,8 @@ export const colors = {
   accent: '#F2C94C',
   accentDark: '#8A6D1A',
   accentSoft: '#FDF6E3',
+  /** Warm border tint paired with accentSoft surfaces. */
+  accentBorder: '#EDDA9A',
   white: '#FFFFFF',
   background: '#FFFFFF',
   /** Near-white page so soft card shadows read cleanly. */
@@ -38,4 +40,13 @@ export const colors = {
   shadow: '#1A1A1A',
   error: '#DC2626',
   success: '#059669',
+} as const;
+
+/** Subtle inactive tints for sport category chips — selected state stays brand green. */
+export const sportTints = {
+  football: { soft: '#E8F8F0', border: '#B8E6D0' },
+  cricket: { soft: '#FDF6E3', border: '#EDDA9A' },
+  badminton: { soft: '#EEF4FC', border: '#C5D9F2' },
+  basketball: { soft: '#FFF2EA', border: '#F0CDB0' },
+  padel: { soft: '#F4F0FA', border: '#D5C8E8' },
 } as const;

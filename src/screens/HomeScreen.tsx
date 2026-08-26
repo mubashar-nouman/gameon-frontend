@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import {
   FlatList,
@@ -14,12 +14,23 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import ArenaCard from '../components/home/ArenaCard';
-import ArenaSortPanel, { type SortOption } from '../components/home/ArenaSortPanel';
+import ArenaFilterSheet, { type SortOption } from '../components/home/ArenaFilterSheet';
+import HomeBannerCarousel from '../components/home/HomeBannerCarousel';
+import LocationSheet from '../components/home/LocationSheet';
+import { locateNearestArea } from '../services/location';
 import OpenMatchCard from '../components/home/OpenMatchCard';
 import SectionHeader from '../components/home/SectionHeader';
 import SportSelector from '../components/home/SportSelector';
 import { FadeInView, Card } from '../components/ui';
-import { arenas, openMatches, sports, user } from '../data';
+import {
+  areas,
+  arenas,
+  getArea,
+  isInArea,
+  openMatches,
+  sports,
+  user,
+} from '../data';
 import type { DiscoverStackParamList } from '../navigation/types';
 import { colors } from '../theme/colors';
 import { radius } from '../theme/radius';
@@ -38,16 +49,42 @@ export default function HomeScreen({ navigation }: Props) {
   const [saved, setSaved] = useState<Record<string, boolean>>({});
   const [sortBy, setSortBy] = useState<SortOption>('nearest');
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const [locationOpen, setLocationOpen] = useState(false);
+  const [areaId, setAreaId] = useState('all');
+  const [locating, setLocating] = useState(false);
+  const [locateError, setLocateError] = useState<string | undefined>();
+  const scrollRef = useRef<ScrollView>(null);
+  const arenaSectionY = useRef(0);
 
   const selectedSport = sports.find((s) => s.id === selectedSportId);
 
+  const selectedArea = getArea(areaId);
+
   const visibleMatches = useMemo(
-    () => openMatches.filter((match) => match.sportId === selectedSportId),
-    [selectedSportId],
+    () =>
+      openMatches.filter(
+        (match) =>
+          match.sportId === selectedSportId && isInArea(match.area, areaId),
+      ),
+    [selectedSportId, areaId],
   );
 
+  /** Arenas per area for the counts shown in the picker. */
+  const areaCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    areas.forEach((area) => {
+      counts[area.id] = arenas.filter((arena) =>
+        isInArea(arena.area, area.id),
+      ).length;
+    });
+    return counts;
+  }, []);
+
   const visibleArenas = useMemo(() => {
-    const bySport = arenas.filter((arena) => arena.sportId === selectedSportId);
+    const bySport = arenas.filter(
+      (arena) =>
+        arena.sportId === selectedSportId && isInArea(arena.area, areaId),
+    );
     const q = query.trim().toLowerCase();
     const filtered = !q
       ? bySport
@@ -62,7 +99,7 @@ export default function HomeScreen({ navigation }: Props) {
       if (sortBy === 'price') return a.pricePerHour - b.pricePerHour;
       return b.rating - a.rating;
     });
-  }, [selectedSportId, query, sortBy]);
+  }, [selectedSportId, query, sortBy, areaId]);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -77,17 +114,61 @@ export default function HomeScreen({ navigation }: Props) {
 
   const goToMatches = () => navigation.getParent()?.navigate('Matches');
 
-  const selectSort = (option: SortOption) => {
-    setSortBy(option);
-    setFiltersOpen(false);
+  const applySort = (option: SortOption) => setSortBy(option);
+
+  const scrollToArenas = () => {
+    scrollRef.current?.scrollTo({
+      y: Math.max(arenaSectionY.current - spacing.lg, 0),
+      animated: true,
+    });
   };
+
+  const handleUseCurrentLocation = useCallback(async () => {
+    setLocating(true);
+    setLocateError(undefined);
+
+    const result = await locateNearestArea();
+
+    if (result.status === 'success') {
+      setAreaId(result.area.id);
+      setLocationOpen(false);
+    } else if (result.status === 'denied') {
+      setLocateError('Location permission denied. Pick an area below.');
+    } else {
+      setLocateError('Could not get your location. Pick an area below.');
+    }
+
+    setLocating(false);
+  }, []);
 
   const sortActive = sortBy !== 'nearest';
 
   return (
     <View style={styles.root}>
       <View style={[styles.statusBarFill, { height: insets.top }]} />
+      <LocationSheet
+        visible={locationOpen}
+        selectedId={areaId}
+        counts={areaCounts}
+        onClose={() => setLocationOpen(false)}
+        onSelect={(id) => {
+          setAreaId(id);
+          setLocationOpen(false);
+        }}
+        onUseCurrentLocation={handleUseCurrentLocation}
+        locating={locating}
+        locateError={locateError}
+      />
+
+      <ArenaFilterSheet
+        visible={filtersOpen}
+        value={sortBy}
+        resultCount={visibleArenas.length}
+        onClose={() => setFiltersOpen(false)}
+        onApply={applySort}
+      />
       <ScrollView
+        ref={scrollRef}
         style={styles.screen}
         contentContainerStyle={[
           styles.content,
@@ -117,11 +198,16 @@ export default function HomeScreen({ navigation }: Props) {
             <Pressable
               accessibilityRole="button"
               accessibilityLabel="Change location"
-              style={styles.locationRow}
+              onPress={() => setLocationOpen(true)}
+              hitSlop={6}
+              style={({ pressed }) => [
+                styles.locationRow,
+                pressed && styles.pressed,
+              ]}
             >
               <Ionicons name="location-sharp" size={12} color={colors.primary} />
               <Text style={styles.locationText} numberOfLines={1}>
-                {user.location}
+                {selectedArea?.name ?? user.location}
               </Text>
               <Ionicons name="chevron-down" size={11} color={colors.muted} />
             </Pressable>
@@ -154,29 +240,21 @@ export default function HomeScreen({ navigation }: Props) {
             <Pressable
               accessibilityRole="button"
               accessibilityLabel="Sort and filters"
-              accessibilityState={{ expanded: filtersOpen }}
               hitSlop={8}
-              onPress={() => setFiltersOpen((open) => !open)}
+              onPress={() => setFiltersOpen(true)}
               style={({ pressed }) => [
                 styles.filterBtn,
-                (filtersOpen || sortActive) && styles.filterBtnActive,
+                sortActive && styles.filterBtnActive,
                 pressed && styles.pressed,
               ]}
             >
               <Ionicons
                 name="options-outline"
                 size={17}
-                color={filtersOpen || sortActive ? colors.primary : colors.text}
+                color={sortActive ? colors.primary : colors.text}
               />
             </Pressable>
           </View>
-
-          {filtersOpen ? (
-            <>
-              <View style={styles.panelDivider} />
-              <ArenaSortPanel value={sortBy} onChange={selectSort} />
-            </>
-          ) : null}
           </Card>
         </FadeInView>
 
@@ -188,10 +266,19 @@ export default function HomeScreen({ navigation }: Props) {
           />
         </FadeInView>
 
+        <FadeInView delay={20}>
+          <HomeBannerCarousel
+            onExploreMatches={goToMatches}
+            onBrowseArenas={scrollToArenas}
+            onCreateMatch={goToMatches}
+          />
+        </FadeInView>
+
         <FadeInView delay={40} style={styles.section}>
           <SectionHeader
             title="Open matches"
             subtitle="Games near you that need players"
+            tone="social"
             actionLabel="See all"
             onActionPress={goToMatches}
           />
@@ -206,7 +293,8 @@ export default function HomeScreen({ navigation }: Props) {
                 <Text style={styles.matchesEmptyEmoji}>{selectedSport?.emoji}</Text>
                 <View style={styles.matchesEmptyText}>
                   <Text style={styles.matchesEmptyTitle}>
-                    No {selectedSport?.name.toLowerCase()} matches yet
+                    No {selectedSport?.name.toLowerCase()} matches
+                    {areaId === 'all' ? ' yet' : ` in ${selectedArea?.shortName}`}
                   </Text>
                   <Text style={styles.matchesEmptyBody}>
                     Tap + below to create one, or browse all matches
@@ -229,10 +317,16 @@ export default function HomeScreen({ navigation }: Props) {
           )}
         </FadeInView>
 
-        <FadeInView delay={80} style={styles.arenaSection}>
+        <View
+          onLayout={(event) => {
+            arenaSectionY.current = event.nativeEvent.layout.y;
+          }}
+        >
+          <FadeInView delay={80} style={styles.arenaSection}>
           <SectionHeader
             title="Nearby arenas"
             subtitle="Courts and grounds around your area"
+            tone="brand"
             actionLabel={visibleArenas.length > 0 ? 'See all' : undefined}
           />
 
@@ -241,8 +335,22 @@ export default function HomeScreen({ navigation }: Props) {
               <Ionicons name="search-outline" size={22} color={colors.muted} />
               <Text style={styles.emptyTitle}>No arenas found</Text>
               <Text style={styles.emptyText}>
-                Try another sport or clear your search.
+                {areaId === 'all'
+                  ? 'Try another sport or clear your search.'
+                  : `No ${selectedSport?.name.toLowerCase()} arenas in ${
+                      selectedArea?.shortName
+                    }.`}
               </Text>
+              {areaId !== 'all' ? (
+                <Pressable
+                  accessibilityRole="button"
+                  onPress={() => setAreaId('all')}
+                  hitSlop={6}
+                  style={({ pressed }) => [pressed && styles.pressed]}
+                >
+                  <Text style={styles.emptyAction}>Search all Lahore</Text>
+                </Pressable>
+              ) : null}
             </View>
           ) : (
             <View style={styles.arenaList}>
@@ -257,7 +365,8 @@ export default function HomeScreen({ navigation }: Props) {
               ))}
             </View>
           )}
-        </FadeInView>
+          </FadeInView>
+        </View>
       </ScrollView>
     </View>
   );
@@ -358,10 +467,6 @@ const styles = StyleSheet.create({
   filterBtnActive: {
     backgroundColor: colors.primarySoft,
   },
-  panelDivider: {
-    height: StyleSheet.hairlineWidth,
-    backgroundColor: colors.borderSubtle,
-  },
   sports: { marginTop: spacing.lg },
   section: { marginTop: spacing.xl, gap: spacing.md },
   arenaSection: { marginTop: spacing.xl, gap: spacing.md },
@@ -383,7 +488,7 @@ const styles = StyleSheet.create({
     gap: spacing.md,
     padding: spacing.md,
   },
-  matchesEmptyEmoji: { fontSize: 22 },
+  matchesEmptyEmoji: { fontSize: fontSize.sportEmoji },
   matchesEmptyText: { flex: 1, gap: 2 },
   matchesEmptyTitle: {
     fontSize: fontSize.footnote,
@@ -399,6 +504,12 @@ const styles = StyleSheet.create({
     paddingTop: spacing.lg,
     alignItems: 'center',
     gap: spacing.xs,
+  },
+  emptyAction: {
+    marginTop: spacing.sm,
+    fontSize: fontSize.body,
+    fontWeight: fontWeight.semibold,
+    color: colors.primary,
   },
   emptyTitle: {
     fontSize: fontSize.footnote,

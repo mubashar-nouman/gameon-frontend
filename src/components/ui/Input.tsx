@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
     color: colors.muted,
   },
   field: {
-    height: 52,
+    height: 46,
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,
@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
   fieldFocused: { borderColor: colors.primary, backgroundColor: colors.white },
   input: {
     flex: 1,
-    fontSize: fontSize.callout,
+    fontSize: fontSize.bodyLarge,
     fontWeight: fontWeight.regular,
     color: colors.text,
     // Reset RN's default TextInput padding so height stays exactly 48.

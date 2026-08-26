@@ -3,26 +3,44 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { colors } from '../../theme/colors';
 import { radius } from '../../theme/radius';
 import { screenPadding, spacing } from '../../theme/spacing';
-import { fontSize, fontWeight } from '../../theme/typography';
+import { fontSize, fontWeight, lineHeight } from '../../theme/typography';
+
+type Tone = 'brand' | 'social';
 
 type Props = {
   title: string;
   subtitle?: string;
   actionLabel?: string;
   onActionPress?: () => void;
+  /** `brand` = booking green · `social` = warm gold for matches */
+  tone?: Tone;
 };
+
+const toneStyles = {
+  brand: {
+    accent: colors.primary,
+    action: colors.primary,
+  },
+  social: {
+    accent: colors.accent,
+    action: colors.accentDark,
+  },
+} as const;
 
 export default function SectionHeader({
   title,
   subtitle,
   actionLabel,
   onActionPress,
+  tone = 'brand',
 }: Props) {
+  const palette = toneStyles[tone];
+
   return (
     <View style={styles.row}>
       <View style={styles.leading}>
         <View style={styles.titleRow}>
-          <View style={styles.accent} />
+          <View style={[styles.accent, { backgroundColor: palette.accent }]} />
           <Text style={styles.title}>{title}</Text>
         </View>
         {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
@@ -34,7 +52,7 @@ export default function SectionHeader({
           onPress={onActionPress}
           style={({ pressed }) => [styles.actionBtn, pressed && styles.pressed]}
         >
-          <Text style={styles.action}>{actionLabel}</Text>
+          <Text style={[styles.action, { color: palette.action }]}>{actionLabel}</Text>
         </Pressable>
       ) : null}
     </View>
@@ -64,7 +82,6 @@ const styles = StyleSheet.create({
     width: ACCENT_WIDTH,
     height: 20,
     borderRadius: radius.pill,
-    backgroundColor: colors.primary,
   },
   title: {
     flex: 1,
@@ -78,7 +95,7 @@ const styles = StyleSheet.create({
     fontSize: fontSize.caption,
     fontWeight: fontWeight.regular,
     color: colors.muted,
-    lineHeight: 18,
+    lineHeight: fontSize.sectionTitle * lineHeight.tight,
   },
   actionBtn: {
     paddingTop: 4,
@@ -86,7 +103,6 @@ const styles = StyleSheet.create({
   action: {
     fontSize: fontSize.footnote,
     fontWeight: fontWeight.semibold,
-    color: colors.primary,
     textDecorationLine: 'underline',
   },
   pressed: { opacity: 0.6 },

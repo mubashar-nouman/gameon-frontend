@@ -5,6 +5,7 @@
  * there by hand and the app picks them up on reload. This module only attaches
  * types and joins records by `sportId`.
  */
+import areasJson from '../dummy-data/home-areas.json';
 import arenasJson from '../dummy-data/home-arenas.json';
 import bookingDatesJson from './json/bookingDates.json';
 import bookingsJson from './json/bookings.json';
@@ -72,6 +73,17 @@ export type BookingDate = {
   day: string;
 };
 
+export type Area = {
+  id: string;
+  name: string;
+  shortName: string;
+  /** Area-name prefixes that belong to this area; empty means "everywhere". */
+  matches: string[];
+  /** Approximate centre, used to resolve a GPS fix to the nearest area. */
+  lat?: number;
+  lng?: number;
+};
+
 export type User = {
   id: string;
   firstName: string;
@@ -83,10 +95,22 @@ export type User = {
 export const sports: Sport[] = sportsJson;
 export const arenas: Arena[] = arenasJson;
 export const openMatches: OpenMatch[] = openMatchesJson;
+export const areas: Area[] = areasJson;
 export const user: User = userJson;
 export const bookings: Booking[] = bookingsJson;
 export const slots: Slot[] = slotsJson;
 export const bookingDates: BookingDate[] = bookingDatesJson;
+
+export function getArea(areaId: string): Area | undefined {
+  return areas.find((area) => area.id === areaId);
+}
+
+/** True when a record's area string belongs to the selected area. */
+export function isInArea(recordArea: string, areaId: string): boolean {
+  const area = getArea(areaId);
+  if (!area || area.matches.length === 0) return true;
+  return area.matches.some((prefix) => recordArea.startsWith(prefix));
+}
 
 export function getArena(arenaId: string): Arena | undefined {
   return arenas.find((arena) => arena.id === arenaId);

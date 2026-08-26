@@ -1,7 +1,7 @@
 import { Pressable, ScrollView, StyleSheet, Text } from 'react-native';
 
 import type { Sport } from '../../data';
-import { colors } from '../../theme/colors';
+import { colors, sportTints } from '../../theme/colors';
 import { elevation } from '../../theme/elevation';
 import { radius } from '../../theme/radius';
 import { screenPadding, spacing } from '../../theme/spacing';
@@ -11,7 +11,6 @@ type Props = {
   sports: Sport[];
   selectedId: string;
   onSelect: (sportId: string) => void;
-  /** When true, chips sit inside a parent panel — less horizontal padding. */
   embedded?: boolean;
 };
 
@@ -32,6 +31,8 @@ export default function SportSelector({
     >
       {sports.map((sport) => {
         const active = sport.id === selectedId;
+        const tint = sportTints[sport.id as keyof typeof sportTints];
+
         return (
           <Pressable
             key={sport.id}
@@ -40,6 +41,9 @@ export default function SportSelector({
             onPress={() => onSelect(sport.id)}
             style={({ pressed }) => [
               styles.chip,
+              !active && tint
+                ? { backgroundColor: tint.soft, borderColor: tint.border }
+                : null,
               active && styles.chipActive,
               pressed && !active && styles.chipPressed,
             ]}
@@ -83,9 +87,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   chipPressed: {
-    backgroundColor: colors.backgroundSecondary,
+    opacity: 0.88,
   },
-  emoji: { fontSize: 14 },
+  emoji: { fontSize: fontSize.callout },
   label: {
     fontSize: fontSize.caption,
     fontWeight: fontWeight.medium,

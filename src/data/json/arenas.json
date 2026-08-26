@@ -9,9 +9,18 @@
     "rating": 4.6,
     "reviewCount": 120,
     "distanceKm": 1.2,
-    "availableWindows": ["6AM – 12PM", "12PM – 6PM", "6PM – 12AM"],
+    "availableWindows": [
+      "6AM – 12PM",
+      "12PM – 6PM",
+      "6PM – 12AM"
+    ],
     "activeWindow": "6PM – 12AM",
-    "facilities": ["Floodlights", "Changing room", "Parking", "Water"]
+    "facilities": [
+      "Floodlights",
+      "Changing room",
+      "Parking",
+      "Water"
+    ]
   },
   {
     "id": "a2",
@@ -23,9 +32,17 @@
     "rating": 4.4,
     "reviewCount": 98,
     "distanceKm": 4.8,
-    "availableWindows": ["6AM – 12PM", "12PM – 6PM", "6PM – 12AM"],
+    "availableWindows": [
+      "6AM – 12PM",
+      "12PM – 6PM",
+      "6PM – 12AM"
+    ],
     "activeWindow": "12PM – 6PM",
-    "facilities": ["Floodlights", "Parking", "Cafe"]
+    "facilities": [
+      "Floodlights",
+      "Parking",
+      "Cafe"
+    ]
   },
   {
     "id": "a3",
@@ -37,9 +54,17 @@
     "rating": 4.7,
     "reviewCount": 124,
     "distanceKm": 11.3,
-    "availableWindows": ["6AM – 12PM", "12PM – 6PM", "6PM – 12AM"],
+    "availableWindows": [
+      "6AM – 12PM",
+      "12PM – 6PM",
+      "6PM – 12AM"
+    ],
     "activeWindow": "6AM – 12PM",
-    "facilities": ["Floodlights", "Changing room", "Water"]
+    "facilities": [
+      "Floodlights",
+      "Changing room",
+      "Water"
+    ]
   },
   {
     "id": "a4",
@@ -51,9 +76,17 @@
     "rating": 4.3,
     "reviewCount": 76,
     "distanceKm": 5.4,
-    "availableWindows": ["6AM – 12PM", "12PM – 6PM", "6PM – 12AM"],
+    "availableWindows": [
+      "6AM – 12PM",
+      "12PM – 6PM",
+      "6PM – 12AM"
+    ],
     "activeWindow": "6PM – 12AM",
-    "facilities": ["Parking", "Water", "Cafe"]
+    "facilities": [
+      "Parking",
+      "Water",
+      "Cafe"
+    ]
   },
   {
     "id": "a5",
@@ -65,9 +98,17 @@
     "rating": 4.8,
     "reviewCount": 173,
     "distanceKm": 6.1,
-    "availableWindows": ["6AM – 12PM", "12PM – 6PM", "6PM – 12AM"],
+    "availableWindows": [
+      "6AM – 12PM",
+      "12PM – 6PM",
+      "6PM – 12AM"
+    ],
     "activeWindow": "6PM – 12AM",
-    "facilities": ["Floodlights", "Changing room", "Water"]
+    "facilities": [
+      "Floodlights",
+      "Changing room",
+      "Water"
+    ]
   },
   {
     "id": "a6",
@@ -79,9 +120,16 @@
     "rating": 4.5,
     "reviewCount": 89,
     "distanceKm": 7.9,
-    "availableWindows": ["6AM – 12PM", "12PM – 6PM"],
+    "availableWindows": [
+      "6AM – 12PM",
+      "12PM – 6PM"
+    ],
     "activeWindow": "6AM – 12PM",
-    "facilities": ["Floodlights", "Parking", "Pavilion"]
+    "facilities": [
+      "Floodlights",
+      "Parking",
+      "Pavilion"
+    ]
   },
   {
     "id": "a7",
@@ -93,9 +141,17 @@
     "rating": 4.6,
     "reviewCount": 61,
     "distanceKm": 11.1,
-    "availableWindows": ["6AM – 12PM", "12PM – 6PM", "6PM – 12AM"],
+    "availableWindows": [
+      "6AM – 12PM",
+      "12PM – 6PM",
+      "6PM – 12AM"
+    ],
     "activeWindow": "12PM – 6PM",
-    "facilities": ["Indoor", "Parking", "Water"]
+    "facilities": [
+      "Indoor",
+      "Parking",
+      "Water"
+    ]
   },
   {
     "id": "a8",
@@ -107,9 +163,15 @@
     "rating": 4.2,
     "reviewCount": 44,
     "distanceKm": 5.2,
-    "availableWindows": ["12PM – 6PM", "6PM – 12AM"],
+    "availableWindows": [
+      "12PM – 6PM",
+      "6PM – 12AM"
+    ],
     "activeWindow": "6PM – 12AM",
-    "facilities": ["Indoor", "Water"]
+    "facilities": [
+      "Indoor",
+      "Water"
+    ]
   },
   {
     "id": "a9",
@@ -121,9 +183,16 @@
     "rating": 4.3,
     "reviewCount": 42,
     "distanceKm": 8.5,
-    "availableWindows": ["6AM – 12PM", "6PM – 12AM"],
+    "availableWindows": [
+      "6AM – 12PM",
+      "6PM – 12AM"
+    ],
     "activeWindow": "6PM – 12AM",
-    "facilities": ["Floodlights", "Parking", "Water"]
+    "facilities": [
+      "Floodlights",
+      "Parking",
+      "Water"
+    ]
   },
   {
     "id": "a10",
@@ -135,9 +204,16 @@
     "rating": 4.5,
     "reviewCount": 58,
     "distanceKm": 2.9,
-    "availableWindows": ["12PM – 6PM", "6PM – 12AM"],
+    "availableWindows": [
+      "12PM – 6PM",
+      "6PM – 12AM"
+    ],
     "activeWindow": "12PM – 6PM",
-    "facilities": ["Floodlights", "Changing room", "Cafe"]
+    "facilities": [
+      "Floodlights",
+      "Changing room",
+      "Cafe"
+    ]
   },
   {
     "id": "a11",
@@ -149,9 +225,17 @@
     "rating": 4.9,
     "reviewCount": 118,
     "distanceKm": 3.7,
-    "availableWindows": ["6AM – 12PM", "12PM – 6PM", "6PM – 12AM"],
+    "availableWindows": [
+      "6AM – 12PM",
+      "12PM – 6PM",
+      "6PM – 12AM"
+    ],
     "activeWindow": "6PM – 12AM",
-    "facilities": ["Floodlights", "Changing room", "Cafe"]
+    "facilities": [
+      "Floodlights",
+      "Changing room",
+      "Cafe"
+    ]
   },
   {
     "id": "a12",
@@ -163,8 +247,37 @@
     "rating": 4.7,
     "reviewCount": 73,
     "distanceKm": 6.6,
-    "availableWindows": ["12PM – 6PM", "6PM – 12AM"],
+    "availableWindows": [
+      "12PM – 6PM",
+      "6PM – 12AM"
+    ],
     "activeWindow": "12PM – 6PM",
-    "facilities": ["Indoor", "Parking", "Water"]
+    "facilities": [
+      "Indoor",
+      "Parking",
+      "Water"
+    ]
+  },
+  {
+    "id": "a13",
+    "name": "Sky Padel Club",
+    "area": "Gulberg III, Lahore",
+    "sportId": "padel",
+    "grounds": 2,
+    "pricePerHour": 3800,
+    "rating": 4.6,
+    "reviewCount": 54,
+    "distanceKm": 4.2,
+    "availableWindows": [
+      "6AM – 12PM",
+      "12PM – 6PM",
+      "6PM – 12AM"
+    ],
+    "activeWindow": "6PM – 12AM",
+    "facilities": [
+      "Rooftop",
+      "Floodlights",
+      "Parking"
+    ]
   }
 ]

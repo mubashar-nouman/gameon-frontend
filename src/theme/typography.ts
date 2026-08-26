@@ -10,15 +10,22 @@ export const fontFamily = {
 } as const;
 
 export const fontSize = {
-  caption: 13,
-  footnote: 14,
-  body: 16,
-  bodyLarge: 17,
-  callout: 18,
-  sectionTitle: 20,
-  screenTitle: 22,
+  /** Badges, dot labels, dense metadata. */
+  caption: 11,
+  /** Secondary meta under a title; tab bar labels. */
+  footnote: 13,
+  /** Default body and list subtitles. */
+  body: 14,
+  /** Card titles, list row titles, button labels. */
+  bodyLarge: 15,
+  /** Prices and emphasised inline values. */
+  callout: 16,
+  /** Section headings within a screen. */
+  sectionTitle: 17,
+  /** The one large heading per screen. */
+  screenTitle: 20,
   /** Emoji glyph inside sport tiles — a graphic, not body copy. */
-  sportEmoji: 28,
+  sportEmoji: 24,
   /** Splash / onboarding hero only — not for in-app screens */
   display: 36,
 } as const;

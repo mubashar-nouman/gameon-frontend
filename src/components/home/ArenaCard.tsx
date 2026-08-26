@@ -1,7 +1,14 @@
 import { Ionicons } from '@expo/vector-icons';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import {
+  Image,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 
 import SportArt from '../art/SportArt';
+import { getArenaImage } from '../../data/arenaImages';
 import Card from '../ui/Card';
 import { formatPkr, getSport, type Arena } from '../../data';
 import { colors } from '../../theme/colors';
@@ -24,6 +31,10 @@ export default function ArenaCard({
   onToggleSave,
 }: Props) {
   const sport = getSport(arena.sportId);
+  // Derive a stable variant from the arena id so a given arena always shows
+  // the same photo, while neighbouring cards differ.
+  const variant = Number(arena.id.replace(/\D/g, '')) || 0;
+  const photo = getArenaImage(arena.sportId, variant);
 
   return (
     <Card style={styles.card}>
@@ -33,23 +44,20 @@ export default function ArenaCard({
         style={({ pressed }) => [pressed && styles.pressed]}
       >
         <View style={styles.imageWrap}>
-          <SportArt
-            sportId={arena.sportId}
-            style={styles.art}
-            radius={radius.card}
-          />
+          {photo ? (
+            <Image source={photo} style={styles.art} resizeMode="cover" />
+          ) : (
+            <SportArt
+              sportId={arena.sportId}
+              style={styles.art}
+              radius={radius.card}
+            />
+          )}
 
           <View style={styles.distancePill}>
             <Ionicons name="navigate-outline" size={11} color={colors.text} />
             <Text style={styles.distanceText}>{arena.distanceKm} km</Text>
           </View>
-
-          {sport ? (
-            <View style={styles.sportPill}>
-              <Text style={styles.sportEmoji}>{sport.emoji}</Text>
-              <Text style={styles.sportName}>{sport.name}</Text>
-            </View>
-          ) : null}
 
           <Pressable
             accessibilityRole="button"
@@ -67,9 +75,17 @@ export default function ArenaCard({
         </View>
 
         <View style={styles.body}>
-          <Text style={styles.name} numberOfLines={1}>
-            {arena.name}
-          </Text>
+          <View style={styles.titleRow}>
+            <Text style={styles.name} numberOfLines={1}>
+              {arena.name}
+            </Text>
+            {sport ? (
+              <View style={styles.sportPill}>
+                <Text style={styles.sportEmoji}>{sport.emoji}</Text>
+                <Text style={styles.sportName}>{sport.name}</Text>
+              </View>
+            ) : null}
+          </View>
 
           <Text style={styles.area} numberOfLines={1}>
             {arena.area}
@@ -140,25 +156,21 @@ const styles = StyleSheet.create({
     color: colors.text,
   },
   sportPill: {
-    position: 'absolute',
-    bottom: spacing.sm,
-    left: spacing.sm,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
     paddingHorizontal: spacing.sm,
-    paddingVertical: 4,
+    paddingVertical: 3,
     borderRadius: radius.pill,
-    backgroundColor: colors.white,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: colors.cardBorder,
-    ...elevation.soft,
+    backgroundColor: colors.primarySoft,
+    borderWidth: 1,
+    borderColor: colors.primary,
   },
-  sportEmoji: { fontSize: 12 },
+  sportEmoji: { fontSize: fontSize.caption },
   sportName: {
     fontSize: fontSize.caption,
-    fontWeight: fontWeight.medium,
-    color: colors.text,
+    fontWeight: fontWeight.semibold,
+    color: colors.primaryDark,
   },
   saveBtn: {
     position: 'absolute',
@@ -178,7 +190,13 @@ const styles = StyleSheet.create({
     padding: spacing.md,
     gap: spacing.xs,
   },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
   name: {
+    flex: 1,
     fontSize: fontSize.body,
     fontWeight: fontWeight.semibold,
     color: colors.text,

@@ -6,7 +6,7 @@ import {
   DefaultTheme,
   NavigationContainer,
 } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createStackNavigator } from '@react-navigation/stack';
 import { PlayfairDisplay_700Bold, useFonts } from '@expo-google-fonts/playfair-display';
 import * as NativeSplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
@@ -21,6 +21,10 @@ import ProfileScreen from './src/screens/ProfileScreen';
 import SplashScreen from './src/screens/SplashScreen';
 import FloatingTabBar from './src/components/navigation/FloatingTabBar';
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
+import {
+  depthInterpolator,
+  transitionSpec,
+} from './src/navigation/transitions';
 import type {
   DiscoverStackParamList,
   RootTabParamList,
@@ -38,7 +42,7 @@ if (Platform.OS === 'android') {
 }
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
-const DiscoverStack = createNativeStackNavigator<DiscoverStackParamList>();
+const DiscoverStack = createStackNavigator<DiscoverStackParamList>();
 
 const navigationTheme = {
   ...DefaultTheme,
@@ -68,19 +72,23 @@ const tabLabels: Record<keyof RootTabParamList, string> = {
 
 function DiscoverNavigator() {
   return (
-    <DiscoverStack.Navigator>
-      <DiscoverStack.Screen
-        name="Discover"
-        component={HomeScreen}
-        options={{ headerShown: false }}
-      />
+    <DiscoverStack.Navigator
+      screenOptions={{
+        headerShown: false,
+        gestureEnabled: true,
+        gestureDirection: 'horizontal',
+        // Custom depth transition: the incoming screen rises and scales in
+        // while the one below recedes and dims.
+        cardStyleInterpolator: depthInterpolator,
+        transitionSpec,
+        cardOverlayEnabled: true,
+        cardStyle: { backgroundColor: 'transparent' },
+      }}
+    >
+      <DiscoverStack.Screen name="Discover" component={HomeScreen} />
       <DiscoverStack.Screen
         name="ArenaDetail"
         component={ArenaDetailScreen}
-        options={{
-          // The screen draws its own back control over the hero image.
-          headerShown: false,
-        }}
       />
     </DiscoverStack.Navigator>
   );
@@ -128,7 +136,7 @@ export default function App() {
               )}
               screenOptions={{
                 headerShown: false,
-                animation: 'fade',
+                animation: 'shift',
                 sceneStyle: styles.root,
               }}
             >

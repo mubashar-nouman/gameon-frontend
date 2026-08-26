@@ -8,12 +8,18 @@ import {
   Text,
   View,
 } from 'react-native';
+import Animated, {
+  interpolate,
+  useAnimatedScrollHandler,
+  useAnimatedStyle,
+  useSharedValue,
+} from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import BookingConfirmSheet from '../components/arena/BookingConfirmSheet';
 import SportArt from '../components/art/SportArt';
-import { Button } from '../components/ui';
+import { Button, FadeInView } from '../components/ui';
 import { getArenaImage } from '../data/arenaImages';
 import {
   arenas,
@@ -45,6 +51,34 @@ export default function ArenaDetailScreen({ route, navigation }: Props) {
   const [saved, setSaved] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [booked, setBooked] = useState(false);
+
+  const scrollY = useSharedValue(0);
+
+  const onScroll = useAnimatedScrollHandler((event) => {
+    scrollY.value = event.contentOffset.y;
+  });
+
+  // Pull-down stretches the hero; scrolling up parallaxes it away slowly.
+  const heroStyle = useAnimatedStyle(() => ({
+    transform: [
+      {
+        scale: interpolate(
+          scrollY.value,
+          [-HERO_HEIGHT, 0],
+          [2.2, 1],
+          'clamp',
+        ),
+      },
+      {
+        translateY: interpolate(
+          scrollY.value,
+          [0, HERO_HEIGHT],
+          [0, HERO_HEIGHT * 0.35],
+          'clamp',
+        ),
+      },
+    ],
+  }));
 
   const similar = useMemo(
     () =>
@@ -80,53 +114,31 @@ export default function ArenaDetailScreen({ route, navigation }: Props) {
 
   return (
     <View style={styles.screen}>
-      <ScrollView
+      <Animated.ScrollView
         contentContainerStyle={[
           styles.content,
           { paddingBottom: insets.bottom + 120 },
         ]}
         showsVerticalScrollIndicator={false}
+        onScroll={onScroll}
+        scrollEventThrottle={16}
       >
         {/* Hero */}
-        <View style={styles.hero}>
+        <Animated.View style={[styles.hero, heroStyle]}>
           {photo ? (
             <Image source={photo} style={styles.heroArt} resizeMode="cover" />
           ) : (
             <SportArt sportId={arena.sportId} style={styles.heroArt} />
           )}
 
-          <View style={[styles.heroBar, { top: insets.top + spacing.sm }]}>
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel="Go back"
-              onPress={() => navigation.goBack()}
-              style={styles.heroBtn}
-            >
-              <Ionicons name="arrow-back" size={20} color={colors.text} />
-            </Pressable>
-
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel={saved ? 'Remove from saved' : 'Save arena'}
-              onPress={() => setSaved((prev) => !prev)}
-              style={styles.heroBtn}
-            >
-              <Ionicons
-                name={saved ? 'heart' : 'heart-outline'}
-                size={20}
-                color={saved ? colors.primary : colors.text}
-              />
-            </Pressable>
-          </View>
-
           <View style={styles.sportTag}>
             <Text style={styles.sportEmoji}>{sport?.emoji}</Text>
             <Text style={styles.sportName}>{sport?.name}</Text>
           </View>
-        </View>
+        </Animated.View>
 
         {/* Identity */}
-        <View style={styles.section}>
+        <FadeInView style={styles.section}>
           <Text style={styles.name}>{arena.name}</Text>
 
           <View style={styles.metaRow}>
@@ -149,10 +161,10 @@ export default function ArenaDetailScreen({ route, navigation }: Props) {
             <View style={styles.statDivider} />
             <Stat icon="cash-outline" label={`${formatPkr(arena.pricePerHour)}/hr`} />
           </View>
-        </View>
+        </FadeInView>
 
         {/* Facilities */}
-        <View style={styles.section}>
+        <FadeInView delay={60} style={styles.section}>
           <Text style={styles.heading}>Facilities</Text>
           <View style={styles.facilityGrid}>
             {arena.facilities.map((facility) => (
@@ -166,10 +178,10 @@ export default function ArenaDetailScreen({ route, navigation }: Props) {
               </View>
             ))}
           </View>
-        </View>
+        </FadeInView>
 
         {/* Slot picker */}
-        <View style={[styles.section, styles.bookingSection]}>
+        <FadeInView delay={120} style={[styles.section, styles.bookingSection]}>
           <View style={styles.headingRow}>
             <Text style={styles.heading}>Pick a slot</Text>
             <View style={styles.availPill}>
@@ -245,7 +257,7 @@ export default function ArenaDetailScreen({ route, navigation }: Props) {
               );
             })}
           </View>
-        </View>
+        </FadeInView>
 
         {/* About */}
         <View style={styles.section}>
@@ -385,7 +397,35 @@ export default function ArenaDetailScreen({ route, navigation }: Props) {
             </ScrollView>
           </View>
         ) : null}
-      </ScrollView>
+      </Animated.ScrollView>
+
+      {/* Fixed over the hero: these must not scale with the parallax. */}
+      <View
+        style={[styles.heroBar, { top: insets.top + spacing.sm }]}
+        pointerEvents="box-none"
+      >
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Go back"
+          onPress={() => navigation.goBack()}
+          style={styles.heroBtn}
+        >
+          <Ionicons name="arrow-back" size={20} color={colors.text} />
+        </Pressable>
+
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={saved ? 'Remove from saved' : 'Save arena'}
+          onPress={() => setSaved((prev) => !prev)}
+          style={styles.heroBtn}
+        >
+          <Ionicons
+            name={saved ? 'heart' : 'heart-outline'}
+            size={20}
+            color={saved ? colors.primary : colors.text}
+          />
+        </Pressable>
+      </View>
 
       {/* Sticky booking bar */}
       <View
@@ -457,10 +497,16 @@ const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.pageBackground },
   content: {},
 
-  hero: { height: HERO_HEIGHT, backgroundColor: colors.border },
+  hero: {
+    height: HERO_HEIGHT,
+    backgroundColor: colors.border,
+    // Keeps the stretched image from painting over the content below it.
+    overflow: 'hidden',
+  },
   heroArt: { width: '100%', height: HERO_HEIGHT },
   heroBar: {
     position: 'absolute',
+    zIndex: 2,
     left: screenPadding,
     right: screenPadding,
     flexDirection: 'row',

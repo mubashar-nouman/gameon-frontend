@@ -1,0 +1,58 @@
+[
+  {
+    "id": "n1",
+    "type": "booking",
+    "title": "Booking confirmed",
+    "body": "Goal Point Arena confirmed your 9:00 PM slot tonight.",
+    "time": "12 min ago",
+    "read": false
+  },
+  {
+    "id": "n2",
+    "type": "match",
+    "title": "Bilal wants to join your match",
+    "body": "DHA Football Match · Tonight, 9:00 PM",
+    "time": "1 hour ago",
+    "read": false
+  },
+  {
+    "id": "n3",
+    "type": "match",
+    "title": "Your match is nearly full",
+    "body": "9 of 11 players joined. 2 spots left.",
+    "time": "3 hours ago",
+    "read": false
+  },
+  {
+    "id": "n4",
+    "type": "booking",
+    "title": "Awaiting owner confirmation",
+    "body": "Model Town Cricket Nets will confirm within 15 minutes.",
+    "time": "Yesterday",
+    "read": true
+  },
+  {
+    "id": "n5",
+    "type": "reminder",
+    "title": "Game tomorrow",
+    "body": "Kick Off Sports Complex · Sat, 30 Aug at 7:00 PM",
+    "time": "Yesterday",
+    "read": true
+  },
+  {
+    "id": "n6",
+    "type": "social",
+    "title": "Usman rated you 5 stars",
+    "body": "After Sunday Night Football at Goal Point Arena.",
+    "time": "2 days ago",
+    "read": true
+  },
+  {
+    "id": "n7",
+    "type": "reminder",
+    "title": "Rate your game",
+    "body": "How was Smash Badminton Hall on Friday?",
+    "time": "3 days ago",
+    "read": true
+  }
+]

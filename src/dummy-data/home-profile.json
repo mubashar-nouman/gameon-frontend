@@ -1,0 +1,16 @@
+{
+  "id": "u1",
+  "name": "Mubashar Nouman",
+  "handle": "@mubashar",
+  "memberSince": "Joined March 2026",
+  "location": "DHA Phase 5, Lahore",
+  "rating": 4.8,
+  "ratingCount": 23,
+  "matchesPlayed": 23,
+  "matchesCompleted": 21,
+  "cancellations": 2,
+  "preferredSports": [
+    { "sportId": "football", "level": "Intermediate" },
+    { "sportId": "cricket", "level": "Beginner" }
+  ]
+}

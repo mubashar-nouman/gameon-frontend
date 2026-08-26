@@ -29,13 +29,14 @@ import {
   isInArea,
   openMatches,
   sports,
+  unreadCount,
   user,
 } from '../data';
 import type { DiscoverStackParamList } from '../navigation/types';
 import { colors } from '../theme/colors';
 import { radius } from '../theme/radius';
 import { screenPadding, spacing } from '../theme/spacing';
-import { fontSize, fontWeight } from '../theme/typography';
+import { fontSize, fontWeight, leading } from '../theme/typography';
 
 type Props = NativeStackScreenProps<DiscoverStackParamList, 'Discover'>;
 
@@ -59,6 +60,7 @@ export default function HomeScreen({ navigation }: Props) {
 
   const selectedSport = sports.find((s) => s.id === selectedSportId);
 
+  const unread = unreadCount();
   const selectedCity = getCity(cityId);
   const selectedArea = getArea(cityId, areaId);
   /** True when the whole city is selected rather than one area. */
@@ -242,11 +244,22 @@ export default function HomeScreen({ navigation }: Props) {
 
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel="Notifications"
+            accessibilityLabel={
+              unread > 0
+                ? `Notifications, ${unread} unread`
+                : 'Notifications'
+            }
+            onPress={() => navigation.navigate('Notifications')}
             style={({ pressed }) => [styles.iconBtn, pressed && styles.pressed]}
           >
             <Ionicons name="notifications-outline" size={19} color={colors.text} />
-            {user.hasUnreadNotifications ? <View style={styles.dot} /> : null}
+            {unread > 0 ? (
+              <View style={styles.badge}>
+                <Text style={styles.badgeText}>
+                  {unread > 9 ? '9+' : unread}
+                </Text>
+              </View>
+            ) : null}
           </Pressable>
         </View>
 
@@ -421,16 +434,26 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   pressed: { opacity: 0.65 },
-  dot: {
+  badge: {
     position: 'absolute',
-    top: 9,
-    right: 9,
-    width: 7,
-    height: 7,
-    borderRadius: 4,
+    top: 4,
+    right: 4,
+    minWidth: 16,
+    height: 16,
+    paddingHorizontal: 3,
+    // Half of height — a pill for one or two digits.
+    borderRadius: 8,
+    backgroundColor: colors.error,
+    alignItems: 'center',
+    justifyContent: 'center',
     borderWidth: 1.5,
     borderColor: colors.white,
-    backgroundColor: colors.primary,
+  },
+  badgeText: {
+    fontSize: fontSize.badge,
+    lineHeight: leading(fontSize.badge, 1.3),
+    fontWeight: fontWeight.bold,
+    color: colors.white,
   },
   discoveryPanel: {
     marginHorizontal: screenPadding,

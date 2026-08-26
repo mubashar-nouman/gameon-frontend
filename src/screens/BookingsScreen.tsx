@@ -1,21 +1,70 @@
+import { useMemo, useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import {
+  FlatList,
+  RefreshControl,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { Badge, Card, Thumbnail } from '../components/ui';
-import { bookings, formatPkr } from '../data';
+import BookingCard from '../components/bookings/BookingCard';
+import SegmentedTabs, {
+  type Segment,
+} from '../components/matches/SegmentedTabs';
+import { FadeInView } from '../components/ui';
+import { bookings, formatPkr, isUpcoming, type Booking } from '../data';
 import { colors } from '../theme/colors';
+import { radius } from '../theme/radius';
 import { screenPadding, spacing } from '../theme/spacing';
-import { fontSize, fontWeight } from '../theme/typography';
+import { fontSize, fontWeight, leading } from '../theme/typography';
 
 /** Clears the floating tab bar so the last row is never hidden behind it. */
 const TAB_BAR_CLEARANCE = 96;
 
 export default function BookingsScreen() {
   const insets = useSafeAreaInsets();
+  const [tab, setTab] = useState('upcoming');
+  const [refreshing, setRefreshing] = useState(false);
+
+  const upcoming = useMemo(
+    () =>
+      bookings
+        .filter(isUpcoming)
+        .sort((a, b) => a.isoDate.localeCompare(b.isoDate)),
+    [],
+  );
+
+  const past = useMemo(
+    () =>
+      bookings
+        .filter((booking) => !isUpcoming(booking))
+        // Most recent first — history reads backwards from now.
+        .sort((a, b) => b.isoDate.localeCompare(a.isoDate)),
+    [],
+  );
+
+  const visible = tab === 'upcoming' ? upcoming : past;
+
+  const segments: Segment[] = [
+    { id: 'upcoming', label: 'Upcoming', count: upcoming.length },
+    { id: 'past', label: 'Past', count: past.length },
+  ];
+
+  const nextUp = upcoming[0];
+  const totalSpent = past
+    .filter((booking) => booking.status === 'completed')
+    .reduce((sum, booking) => sum + booking.price, 0);
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    // Placeholder until a real data layer exists.
+    setTimeout(() => setRefreshing(false), 800);
+  };
 
   return (
-    <ScrollView
+    <FlatList
       style={styles.screen}
       contentContainerStyle={[
         styles.content,
@@ -24,42 +73,80 @@ export default function BookingsScreen() {
           paddingBottom: TAB_BAR_CLEARANCE + insets.bottom,
         },
       ]}
+      data={visible}
+      keyExtractor={(item: Booking) => item.id}
       showsVerticalScrollIndicator={false}
-    >
-      <Text style={styles.title}>Bookings</Text>
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          tintColor={colors.primary}
+          colors={[colors.primary]}
+        />
+      }
+      ListHeaderComponent={
+        <View>
+          <Text style={styles.title}>Bookings</Text>
+          <Text style={styles.subtitle}>
+            {tab === 'upcoming'
+              ? 'Games you have booked'
+              : `${formatPkr(totalSpent)} spent on ${
+                  past.filter((b) => b.status === 'completed').length
+                } games`}
+          </Text>
 
-      {bookings.length === 0 ? (
-        <View style={styles.empty}>
-          <Ionicons name="calendar-outline" size={28} color={colors.muted} />
-          <Text style={styles.emptyText}>No bookings yet.</Text>
-        </View>
-      ) : (
-        <View style={styles.list}>
-          {bookings.map((booking) => (
-            <Card key={booking.id} style={styles.card}>
-              <Thumbnail icon="football-outline" size={56} />
-              <View style={styles.body}>
-                <Text style={styles.name} numberOfLines={1}>
-                  {booking.arenaName}
-                </Text>
-                <Text style={styles.meta} numberOfLines={1}>
-                  {booking.date} · {booking.time} · {booking.area}
-                </Text>
-                <View style={styles.footer}>
-                  <Text style={styles.price} numberOfLines={1}>
-                    {formatPkr(booking.price)}
-                  </Text>
-                  <Badge
-                    label={booking.status === 'confirmed' ? 'Confirmed' : 'Pending'}
-                    tone={booking.status === 'confirmed' ? 'positive' : 'attention'}
-                  />
-                </View>
+          {/* Next-up strip: the one booking that needs attention today. */}
+          {tab === 'upcoming' && nextUp ? (
+            <FadeInView style={styles.nextUp}>
+              <View style={styles.nextIcon}>
+                <Ionicons name="flash" size={16} color={colors.white} />
               </View>
-            </Card>
-          ))}
+              <View style={styles.nextText}>
+                <Text style={styles.nextLabel}>Next up</Text>
+                <Text style={styles.nextValue} numberOfLines={1}>
+                  {nextUp.arenaName} · {nextUp.date}
+                </Text>
+              </View>
+              <Text style={styles.nextTime} numberOfLines={1}>
+                {nextUp.time.split('–')[0].trim()}
+              </Text>
+            </FadeInView>
+          ) : null}
+
+          <View style={styles.tabs}>
+            <SegmentedTabs
+              segments={segments}
+              selectedId={tab}
+              onSelect={setTab}
+            />
+          </View>
         </View>
+      }
+      ListEmptyComponent={
+        <FadeInView style={styles.empty}>
+          <View style={styles.emptyIcon}>
+            <Ionicons
+              name={tab === 'upcoming' ? 'calendar-outline' : 'time-outline'}
+              size={26}
+              color={colors.muted}
+            />
+          </View>
+          <Text style={styles.emptyTitle}>
+            {tab === 'upcoming' ? 'No upcoming bookings' : 'No past bookings'}
+          </Text>
+          <Text style={styles.emptyBody}>
+            {tab === 'upcoming'
+              ? 'Find a ground and book your next game.'
+              : 'Games you have played will appear here.'}
+          </Text>
+        </FadeInView>
+      }
+      renderItem={({ item, index }) => (
+        <FadeInView delay={Math.min(index, 4) * 40} style={styles.item}>
+          <BookingCard booking={item} />
+        </FadeInView>
       )}
-    </ScrollView>
+    />
   );
 }
 
@@ -69,46 +156,95 @@ const styles = StyleSheet.create({
   title: {
     paddingHorizontal: screenPadding,
     fontSize: fontSize.screenTitle,
+    lineHeight: leading(fontSize.screenTitle, 1.3),
     fontWeight: fontWeight.bold,
     color: colors.text,
   },
-  list: {
+  subtitle: {
+    marginTop: spacing.xs,
     paddingHorizontal: screenPadding,
-    paddingTop: spacing.lg,
-    gap: spacing.md,
+    fontSize: fontSize.footnote,
+    lineHeight: leading(fontSize.footnote),
+    color: colors.muted,
   },
-  card: {
+
+  nextUp: {
+    marginTop: spacing.lg,
+    marginHorizontal: screenPadding,
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.md,
     padding: spacing.md,
+    borderRadius: radius.card,
+    backgroundColor: colors.primarySoft,
+    borderWidth: 1,
+    borderColor: colors.primary,
   },
-  body: { flex: 1 },
-  name: {
-    fontSize: fontSize.bodyLarge,
-    fontWeight: fontWeight.medium,
-    color: colors.text,
-  },
-  meta: {
-    marginTop: spacing.xs,
-    fontSize: fontSize.footnote,
-    color: colors.muted,
-  },
-  footer: {
-    marginTop: spacing.sm,
-    flexDirection: 'row',
+  nextIcon: {
+    width: 34,
+    height: 34,
+    // Half of width/height — a circle, not a radius-token value.
+    borderRadius: 17,
+    backgroundColor: colors.primary,
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
   },
-  price: {
-    fontSize: fontSize.bodyLarge,
+  nextText: { flex: 1, minWidth: 0 },
+  nextLabel: {
+    fontSize: fontSize.caption,
+    lineHeight: leading(fontSize.caption),
+    fontWeight: fontWeight.bold,
+    color: colors.primaryDark,
+  },
+  nextValue: {
+    marginTop: 2,
+    fontSize: fontSize.footnote,
+    lineHeight: leading(fontSize.footnote),
     fontWeight: fontWeight.semibold,
     color: colors.text,
   },
-  empty: {
-    paddingTop: spacing['4xl'],
-    alignItems: 'center',
-    gap: spacing.md,
+  nextTime: {
+    flexShrink: 0,
+    fontSize: fontSize.footnote,
+    lineHeight: leading(fontSize.footnote),
+    fontWeight: fontWeight.bold,
+    color: colors.primaryDark,
   },
-  emptyText: { fontSize: fontSize.body, color: colors.muted },
+
+  tabs: { paddingHorizontal: screenPadding, marginTop: spacing.lg },
+  item: {
+    paddingHorizontal: screenPadding,
+    paddingTop: spacing.md,
+  },
+
+  empty: {
+    marginTop: spacing['3xl'],
+    paddingHorizontal: screenPadding,
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  emptyIcon: {
+    width: 56,
+    height: 56,
+    // Half of width/height — a circle, not a radius-token value.
+    borderRadius: 28,
+    backgroundColor: colors.white,
+    borderWidth: 1,
+    borderColor: colors.cardBorder,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: spacing.sm,
+  },
+  emptyTitle: {
+    fontSize: fontSize.bodyLarge,
+    lineHeight: leading(fontSize.bodyLarge, 1.3),
+    fontWeight: fontWeight.bold,
+    color: colors.text,
+  },
+  emptyBody: {
+    fontSize: fontSize.footnote,
+    lineHeight: leading(fontSize.footnote),
+    color: colors.muted,
+    textAlign: 'center',
+  },
 });

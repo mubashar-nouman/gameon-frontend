@@ -17,6 +17,7 @@ import ArenaDetailScreen from './src/screens/ArenaDetailScreen';
 import BookingsScreen from './src/screens/BookingsScreen';
 import HomeScreen from './src/screens/HomeScreen';
 import MatchesScreen from './src/screens/MatchesScreen';
+import NotificationsScreen from './src/screens/NotificationsScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
 import SplashScreen from './src/screens/SplashScreen';
 import FloatingTabBar from './src/components/navigation/FloatingTabBar';
@@ -90,6 +91,10 @@ function DiscoverNavigator() {
         name="ArenaDetail"
         component={ArenaDetailScreen}
       />
+      <DiscoverStack.Screen
+        name="Notifications"
+        component={NotificationsScreen}
+      />
     </DiscoverStack.Navigator>
   );
 }
@@ -148,10 +153,11 @@ export default function App() {
                   // Arena detail owns the bottom of the screen with its own
                   // booking bar, so the floating tabs would sit on top of it.
                   tabBarStyle: {
-                    display:
-                      getFocusedRouteNameFromRoute(route) === 'ArenaDetail'
-                        ? 'none'
-                        : 'flex',
+                    display: ['ArenaDetail', 'Notifications'].includes(
+                      getFocusedRouteNameFromRoute(route) ?? '',
+                    )
+                      ? 'none'
+                      : 'flex',
                   },
                 })}
               />

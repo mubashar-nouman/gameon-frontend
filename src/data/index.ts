@@ -7,10 +7,12 @@
  */
 import arenaDetailsJson from '../dummy-data/home-arena-details.json';
 import citiesJson from '../dummy-data/home-cities.json';
+import notificationsJson from '../dummy-data/home-notifications.json';
+import profileJson from '../dummy-data/home-profile.json';
 import reviewsJson from '../dummy-data/home-reviews.json';
 import arenasJson from '../dummy-data/home-arenas.json';
 import bookingDatesJson from './json/bookingDates.json';
-import bookingsJson from './json/bookings.json';
+import bookingsJson from '../dummy-data/home-bookings.json';
 import openMatchesJson from '../dummy-data/home-open-matches.json';
 import slotsJson from './json/slots.json';
 import sportsJson from '../dummy-data/home-sports.json';
@@ -50,15 +52,25 @@ export type OpenMatch = {
   playersNeeded: number;
 };
 
+export type BookingStatus =
+  | 'confirmed'
+  | 'pending'
+  | 'completed'
+  | 'cancelled';
+
 export type Booking = {
   id: string;
   arenaId: string;
   arenaName: string;
   area: string;
+  sportId: string;
   date: string;
+  /** Sortable form of `date`. */
+  isoDate: string;
   time: string;
   price: number;
   status: string;
+  reference: string;
 };
 
 export type Slot = {
@@ -104,6 +116,29 @@ export type Review = {
 
 export type OpeningHours = { day: string; time: string };
 
+export type AppNotification = {
+  id: string;
+  type: string;
+  title: string;
+  body: string;
+  time: string;
+  read: boolean;
+};
+
+export type Profile = {
+  id: string;
+  name: string;
+  handle: string;
+  memberSince: string;
+  location: string;
+  rating: number;
+  ratingCount: number;
+  matchesPlayed: number;
+  matchesCompleted: number;
+  cancellations: number;
+  preferredSports: { sportId: string; level: string }[];
+};
+
 export type User = {
   id: string;
   firstName: string;
@@ -116,6 +151,12 @@ export const sports: Sport[] = sportsJson;
 export const arenas: Arena[] = arenasJson;
 export const openMatches: OpenMatch[] = openMatchesJson;
 export const cities: City[] = citiesJson;
+export const notifications: AppNotification[] = notificationsJson;
+export const profile: Profile = profileJson;
+
+export function unreadCount(): number {
+  return notifications.filter((item) => !item.read).length;
+}
 export const reviews: Review[] = reviewsJson;
 
 /** Reviews for one arena, newest first as authored. */
@@ -140,6 +181,11 @@ export function getArenaDetail(arenaId: string): {
 }
 export const user: User = userJson;
 export const bookings: Booking[] = bookingsJson;
+
+/** Confirmed and pending bookings are upcoming; the rest are history. */
+export function isUpcoming(booking: Booking): boolean {
+  return booking.status === 'confirmed' || booking.status === 'pending';
+}
 export const slots: Slot[] = slotsJson;
 export const bookingDates: BookingDate[] = bookingDatesJson;
 

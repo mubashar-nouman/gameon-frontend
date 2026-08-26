@@ -10,6 +10,8 @@ export const fontFamily = {
 } as const;
 
 export const fontSize = {
+  /** Numeric count inside a notification badge — smaller than caption. */
+  badge: 9,
   /** Badges, dot labels, dense metadata. */
   caption: 11,
   /** Secondary meta under a title; tab bar labels. */

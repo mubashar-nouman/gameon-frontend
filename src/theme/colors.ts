@@ -49,6 +49,8 @@ export const colors = {
   /** Soft gray shadow tint — never pure black for card elevation. */
   shadow: '#1A1A1A',
   error: '#DC2626',
+  /** Tinted surface for cancelled or destructive states. */
+  errorSoft: '#FDECEC',
   success: '#059669',
 } as const;
 

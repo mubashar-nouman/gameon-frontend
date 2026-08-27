@@ -1,41 +1,40 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import type { StackScreenProps } from '@react-navigation/stack';
 
-import { getSport, profile } from '../data';
+import { profile, unreadCount } from '../data';
+import type { ProfileStackParamList } from '../navigation/types';
 import { colors } from '../theme/colors';
 import { radius } from '../theme/radius';
 import { screenPadding, spacing } from '../theme/spacing';
 import { fontSize, fontWeight, leading } from '../theme/typography';
 
+type Props = StackScreenProps<ProfileStackParamList, 'ProfileHome'>;
+
 /** Clears the floating tab bar so the last row is never hidden behind it. */
 const TAB_BAR_CLEARANCE = 96;
 
+/** Every row navigates, so the id is a real route — no cast at the call site. */
 type MenuItem = {
-  id: string;
+  id: Exclude<keyof ProfileStackParamList, 'ProfileHome'>;
   label: string;
   icon: keyof typeof Ionicons.glyphMap;
-  hint?: string;
 };
 
-const ACCOUNT: MenuItem[] = [
-  { id: 'edit', label: 'Edit profile', icon: 'person-outline' },
-  { id: 'sports', label: 'Preferred sports', icon: 'football-outline', hint: '2' },
-  { id: 'payments', label: 'Payment methods', icon: 'card-outline' },
+const APP_ITEMS: MenuItem[] = [
+  { id: 'Notifications', label: 'Notifications', icon: 'notifications-outline' },
+  { id: 'Help', label: 'Help and support', icon: 'help-circle-outline' },
+  { id: 'About', label: 'About GameOn', icon: 'information-circle-outline' },
 ];
 
-const APP: MenuItem[] = [
-  { id: 'notifications', label: 'Notifications', icon: 'notifications-outline' },
-  { id: 'help', label: 'Help and support', icon: 'help-circle-outline' },
-  { id: 'about', label: 'About GameOn', icon: 'information-circle-outline' },
-];
-
-export default function ProfileScreen() {
+export default function ProfileScreen({ navigation }: Props) {
   const insets = useSafeAreaInsets();
 
   const reliability = Math.round(
     (profile.matchesCompleted / profile.matchesPlayed) * 100,
   );
+  const unread = unreadCount();
 
   return (
     <ScrollView
@@ -51,12 +50,10 @@ export default function ProfileScreen() {
     >
       <Text style={styles.title}>Profile</Text>
 
-      {/* Identity */}
+      {/* Identity — the pencil is the only route into editing. */}
       <View style={styles.identity}>
         <View style={styles.avatar}>
-          <Text style={styles.avatarText}>
-            {profile.name.charAt(0)}
-          </Text>
+          <Text style={styles.avatarText}>{profile.name.charAt(0)}</Text>
         </View>
 
         <View style={styles.identityText}>
@@ -69,7 +66,7 @@ export default function ProfileScreen() {
           <View style={styles.ratingRow}>
             <Ionicons name="star" size={13} color={colors.accent} />
             <Text style={styles.ratingValue}>{profile.rating.toFixed(1)}</Text>
-            <Text style={styles.ratingCount}>
+            <Text style={styles.ratingCount} numberOfLines={1}>
               ({profile.ratingCount} ratings)
             </Text>
           </View>
@@ -78,9 +75,11 @@ export default function ProfileScreen() {
         <Pressable
           accessibilityRole="button"
           accessibilityLabel="Edit profile"
+          onPress={() => navigation.navigate('EditProfile')}
+          hitSlop={8}
           style={({ pressed }) => [styles.editBtn, pressed && styles.pressed]}
         >
-          <Ionicons name="create-outline" size={18} color={colors.text} />
+          <Ionicons name="create-outline" size={18} color={colors.primaryDark} />
         </Pressable>
       </View>
 
@@ -93,35 +92,32 @@ export default function ProfileScreen() {
         <Stat value={String(profile.cancellations)} label="Cancelled" />
       </View>
 
-      {/* Preferred sports */}
-      <Text style={styles.sectionLabel}>Preferred sports</Text>
-      <View style={styles.sportRow}>
-        {profile.preferredSports.map((entry) => {
-          const sport = getSport(entry.sportId);
-          return (
-            <View key={entry.sportId} style={styles.sportChip}>
-              <Text style={styles.sportEmoji}>{sport?.emoji}</Text>
-              <View>
-                <Text style={styles.sportName}>{sport?.name}</Text>
-                <Text style={styles.sportLevel}>{entry.level}</Text>
-              </View>
-            </View>
-          );
-        })}
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Add sport"
-          style={({ pressed }) => [styles.addSport, pressed && styles.pressed]}
-        >
-          <Ionicons name="add" size={18} color={colors.primary} />
-        </Pressable>
-      </View>
-
-      <Text style={styles.sectionLabel}>Account</Text>
-      <MenuGroup items={ACCOUNT} />
-
       <Text style={styles.sectionLabel}>App</Text>
-      <MenuGroup items={APP} />
+      <View style={styles.group}>
+        {APP_ITEMS.map((item, index) => (
+          <Pressable
+            key={item.id}
+            accessibilityRole="button"
+            onPress={() => navigation.navigate(item.id)}
+            style={({ pressed }) => [
+              styles.row,
+              index > 0 && styles.rowDivided,
+              pressed && styles.pressed,
+            ]}
+          >
+            <View style={styles.rowIcon}>
+              <Ionicons name={item.icon} size={18} color={colors.muted} />
+            </View>
+            <Text style={styles.rowLabel}>{item.label}</Text>
+            {item.id === 'Notifications' && unread > 0 ? (
+              <View style={styles.badge}>
+                <Text style={styles.badgeText}>{unread}</Text>
+              </View>
+            ) : null}
+            <Ionicons name="chevron-forward" size={17} color={colors.border} />
+          </Pressable>
+        ))}
+      </View>
 
       <Pressable
         accessibilityRole="button"
@@ -141,31 +137,6 @@ function Stat({ value, label }: { value: string; label: string }) {
     <View style={styles.stat}>
       <Text style={styles.statValue}>{value}</Text>
       <Text style={styles.statLabel}>{label}</Text>
-    </View>
-  );
-}
-
-function MenuGroup({ items }: { items: MenuItem[] }) {
-  return (
-    <View style={styles.group}>
-      {items.map((item, index) => (
-        <Pressable
-          key={item.id}
-          accessibilityRole="button"
-          style={({ pressed }) => [
-            styles.row,
-            index > 0 && styles.rowDivided,
-            pressed && styles.pressed,
-          ]}
-        >
-          <View style={styles.rowIcon}>
-            <Ionicons name={item.icon} size={18} color={colors.muted} />
-          </View>
-          <Text style={styles.rowLabel}>{item.label}</Text>
-          {item.hint ? <Text style={styles.rowHint}>{item.hint}</Text> : null}
-          <Ionicons name="chevron-forward" size={17} color={colors.border} />
-        </Pressable>
-      ))}
     </View>
   );
 }
@@ -235,6 +206,8 @@ const styles = StyleSheet.create({
     color: colors.text,
   },
   ratingCount: {
+    flexShrink: 1,
+    minWidth: 0,
     fontSize: fontSize.caption,
     lineHeight: leading(fontSize.caption),
     color: colors.muted,
@@ -244,7 +217,7 @@ const styles = StyleSheet.create({
     height: 36,
     // Half of width/height — a circle, not a radius-token value.
     borderRadius: 18,
-    backgroundColor: colors.pageBackground,
+    backgroundColor: colors.primarySoft,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -286,46 +259,6 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
   },
 
-  sportRow: {
-    paddingHorizontal: screenPadding,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.sm,
-  },
-  sportChip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    borderRadius: radius.md,
-    backgroundColor: colors.white,
-    borderWidth: 1,
-    borderColor: colors.cardBorder,
-  },
-  sportEmoji: { fontSize: fontSize.callout },
-  sportName: {
-    fontSize: fontSize.caption,
-    lineHeight: leading(fontSize.caption),
-    fontWeight: fontWeight.bold,
-    color: colors.text,
-  },
-  sportLevel: {
-    fontSize: fontSize.caption,
-    lineHeight: leading(fontSize.caption),
-    color: colors.muted,
-  },
-  addSport: {
-    width: 44,
-    minHeight: 44,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    borderStyle: 'dashed',
-    borderColor: colors.border,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-
   group: {
     marginHorizontal: screenPadding,
     borderRadius: radius.card,
@@ -355,15 +288,26 @@ const styles = StyleSheet.create({
   },
   rowLabel: {
     flex: 1,
+    minWidth: 0,
     fontSize: fontSize.footnote,
     lineHeight: leading(fontSize.footnote),
     fontWeight: fontWeight.medium,
     color: colors.text,
   },
-  rowHint: {
-    fontSize: fontSize.caption,
-    lineHeight: leading(fontSize.caption),
-    color: colors.muted,
+  badge: {
+    minWidth: 20,
+    paddingHorizontal: spacing.xs,
+    paddingVertical: 2,
+    borderRadius: radius.pill,
+    backgroundColor: colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  badgeText: {
+    fontSize: fontSize.badge,
+    lineHeight: leading(fontSize.badge, 1.6),
+    fontWeight: fontWeight.bold,
+    color: colors.white,
   },
 
   signOut: {

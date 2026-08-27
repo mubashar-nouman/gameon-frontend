@@ -5,4 +5,5 @@ export { default as Chip } from './Chip';
 export { default as FadeInView } from './FadeInView';
 export { default as Input } from './Input';
 export { default as ListRow } from './ListRow';
+export { default as ScreenHeader } from './ScreenHeader';
 export { default as Thumbnail } from './Thumbnail';

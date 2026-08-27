@@ -2,17 +2,24 @@ import { useMemo, useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import type { StackScreenProps } from '@react-navigation/stack';
 
 import { FadeInView } from '../components/ui';
 import { notifications, type AppNotification } from '../data';
-import type { DiscoverStackParamList } from '../navigation/types';
+import type {
+  DiscoverStackParamList,
+  ProfileStackParamList,
+} from '../navigation/types';
 import { colors } from '../theme/colors';
 import { radius } from '../theme/radius';
 import { screenPadding, spacing } from '../theme/spacing';
 import { fontSize, fontWeight, leading } from '../theme/typography';
 
-type Props = NativeStackScreenProps<DiscoverStackParamList, 'Notifications'>;
+// Mounted in both the Discover and Profile stacks; it only ever calls
+// goBack(), so either navigator satisfies it.
+type Props =
+  | StackScreenProps<DiscoverStackParamList, 'Notifications'>
+  | StackScreenProps<ProfileStackParamList, 'Notifications'>;
 
 const ICONS: Record<
   string,

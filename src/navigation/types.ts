@@ -4,11 +4,19 @@ export type DiscoverStackParamList = {
   Notifications: undefined;
 };
 
+export type ProfileStackParamList = {
+  ProfileHome: undefined;
+  EditProfile: undefined;
+  Notifications: undefined;
+  Help: undefined;
+  About: undefined;
+};
+
 export type RootTabParamList = {
   DiscoverTab: undefined;
   Matches: undefined;
   Bookings: undefined;
-  Profile: undefined;
+  ProfileTab: undefined;
 };
 
 declare global {

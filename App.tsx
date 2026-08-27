@@ -23,6 +23,9 @@ import MatchesScreen from './src/screens/MatchesScreen';
 import NotificationsScreen from './src/screens/NotificationsScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
 import SplashScreen from './src/screens/SplashScreen';
+import OtpScreen from './src/screens/auth/OtpScreen';
+import PhoneScreen from './src/screens/auth/PhoneScreen';
+import ProfileSetupScreen from './src/screens/auth/ProfileSetupScreen';
 import FloatingTabBar from './src/components/navigation/FloatingTabBar';
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import {
@@ -30,10 +33,12 @@ import {
   transitionSpec,
 } from './src/navigation/transitions';
 import type {
+  AuthStackParamList,
   DiscoverStackParamList,
   ProfileStackParamList,
   RootTabParamList,
 } from './src/navigation/types';
+import { SessionProvider, useSession } from './src/session/SessionContext';
 import { colors } from './src/theme/colors';
 
 // Keep the native splash up until our own splash is rendered, so there is no
@@ -49,6 +54,7 @@ if (Platform.OS === 'android') {
 const Tab = createBottomTabNavigator<RootTabParamList>();
 const DiscoverStack = createStackNavigator<DiscoverStackParamList>();
 const ProfileStack = createStackNavigator<ProfileStackParamList>();
+const AuthStack = createStackNavigator<AuthStackParamList>();
 
 const navigationTheme = {
   ...DefaultTheme,
@@ -121,17 +127,84 @@ function ProfileNavigator() {
   );
 }
 
-export default function App() {
+function AuthNavigator() {
+  return (
+    <AuthStack.Navigator screenOptions={stackScreenOptions}>
+      <AuthStack.Screen name="Phone" component={PhoneScreen} />
+      <AuthStack.Screen name="Otp" component={OtpScreen} />
+      <AuthStack.Screen name="ProfileSetup" component={ProfileSetupScreen} />
+    </AuthStack.Navigator>
+  );
+}
+
+function AppNavigator() {
+  return (
+    <Tab.Navigator
+      tabBar={(props) => (
+        <FloatingTabBar {...props} icons={tabIcons} labels={tabLabels} />
+      )}
+      screenOptions={{
+        headerShown: false,
+        animation: 'shift',
+        sceneStyle: styles.root,
+      }}
+    >
+      <Tab.Screen
+        name="DiscoverTab"
+        component={DiscoverNavigator}
+        options={({ route }) => ({
+          title: 'Home',
+          // Arena detail owns the bottom of the screen with its own
+          // booking bar, so the floating tabs would sit on top of it.
+          tabBarStyle: {
+            display: ['ArenaDetail', 'Notifications'].includes(
+              getFocusedRouteNameFromRoute(route) ?? '',
+            )
+              ? 'none'
+              : 'flex',
+          },
+        })}
+      />
+      <Tab.Screen name="Matches" component={MatchesScreen} />
+      <Tab.Screen name="Bookings" component={BookingsScreen} />
+      <Tab.Screen
+        name="ProfileTab"
+        component={ProfileNavigator}
+        options={({ route }) => ({
+          title: 'Profile',
+          // Pushed profile screens own the whole page, so the
+          // floating tabs would overlap their content.
+          tabBarStyle: {
+            display:
+              (getFocusedRouteNameFromRoute(route) ?? 'ProfileHome') !==
+              'ProfileHome'
+                ? 'none'
+                : 'flex',
+          },
+        })}
+      />
+    </Tab.Navigator>
+  );
+}
+
+/**
+ * Consumes the session, so it must sit inside SessionProvider rather than
+ * being the component that renders it.
+ */
+function Root() {
   const [isSplashDone, setIsSplashDone] = useState(false);
   const [fontsLoaded] = useFonts({ PlayfairDisplay_700Bold });
+  const { loading, session } = useSession();
+
+  // Startup is finished only when the font and the stored session are both
+  // resolved; hiding earlier flashes the fallback face or the wrong stack.
+  const ready = fontsLoaded && !loading;
 
   useEffect(() => {
-    // Hold the native splash until the brand font is ready, so the headline
-    // never renders in the fallback face first.
-    if (fontsLoaded) {
+    if (ready) {
       void NativeSplashScreen.hideAsync();
     }
-  }, [fontsLoaded]);
+  }, [ready]);
 
   // This callback has no dependency on render state, so it does not need to
   // be a hook. Keeping startup hooks limited to state/font loading/effects
@@ -140,7 +213,7 @@ export default function App() {
 
   // Every hook must run before this early return, or the hook order changes
   // between the unloaded and loaded renders.
-  if (!fontsLoaded) {
+  if (!ready) {
     return (
       <GestureHandlerRootView style={styles.root}>
         <StatusBar style="dark" />
@@ -148,67 +221,30 @@ export default function App() {
     );
   }
 
+  // A returning user with a stored session skips the splash entirely.
+  const showSplash = !isSplashDone && !session;
+
   return (
     <GestureHandlerRootView style={styles.root}>
       <SafeAreaProvider style={styles.root}>
-        {isSplashDone ? (
-          <NavigationContainer theme={navigationTheme}>
-            <Tab.Navigator
-              tabBar={(props) => (
-                <FloatingTabBar
-                  {...props}
-                  icons={tabIcons}
-                  labels={tabLabels}
-                />
-              )}
-              screenOptions={{
-                headerShown: false,
-                animation: 'shift',
-                sceneStyle: styles.root,
-              }}
-            >
-              <Tab.Screen
-                name="DiscoverTab"
-                component={DiscoverNavigator}
-                options={({ route }) => ({
-                  title: 'Home',
-                  // Arena detail owns the bottom of the screen with its own
-                  // booking bar, so the floating tabs would sit on top of it.
-                  tabBarStyle: {
-                    display: ['ArenaDetail', 'Notifications'].includes(
-                      getFocusedRouteNameFromRoute(route) ?? '',
-                    )
-                      ? 'none'
-                      : 'flex',
-                  },
-                })}
-              />
-              <Tab.Screen name="Matches" component={MatchesScreen} />
-              <Tab.Screen name="Bookings" component={BookingsScreen} />
-              <Tab.Screen
-                name="ProfileTab"
-                component={ProfileNavigator}
-                options={({ route }) => ({
-                  title: 'Profile',
-                  // Pushed profile screens own the whole page, so the
-                  // floating tabs would overlap their content.
-                  tabBarStyle: {
-                    display:
-                      (getFocusedRouteNameFromRoute(route) ?? 'ProfileHome') !==
-                      'ProfileHome'
-                        ? 'none'
-                        : 'flex',
-                  },
-                })}
-              />
-            </Tab.Navigator>
-          </NavigationContainer>
-        ) : (
+        {showSplash ? (
           <SplashScreen onFinish={handleSplashFinish} />
+        ) : (
+          <NavigationContainer theme={navigationTheme}>
+            {session ? <AppNavigator /> : <AuthNavigator />}
+          </NavigationContainer>
         )}
-        <StatusBar style="dark" />
+        <StatusBar style={showSplash ? 'light' : 'dark'} />
       </SafeAreaProvider>
     </GestureHandlerRootView>
+  );
+}
+
+export default function App() {
+  return (
+    <SessionProvider>
+      <Root />
+    </SessionProvider>
   );
 }
 

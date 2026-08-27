@@ -14,6 +14,7 @@ import type { StackScreenProps } from '@react-navigation/stack';
 
 import { Button, Input, ScreenHeader } from '../components/ui';
 import { allAreas, profile } from '../data';
+import { useSession } from '../session/SessionContext';
 import type { ProfileStackParamList } from '../navigation/types';
 import { colors } from '../theme/colors';
 import { radius } from '../theme/radius';
@@ -29,11 +30,18 @@ function normaliseHandle(value: string): string {
 
 export default function EditProfileScreen({ navigation }: Props) {
   const insets = useSafeAreaInsets();
+  const { session, update } = useSession();
 
-  const [name, setName] = useState(profile.name);
+  // The session is the source of truth once signed in; the seeded profile is
+  // only a fallback for the not-yet-authenticated case.
+  const initialName = session?.name ?? profile.name;
+  const initialArea = session?.homeArea ?? profile.location;
+
+  const [name, setName] = useState(initialName);
   const [handle, setHandle] = useState(normaliseHandle(profile.handle));
-  const [location, setLocation] = useState(profile.location);
+  const [location, setLocation] = useState(initialArea);
   const [areaOpen, setAreaOpen] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   const areas = useMemo(allAreas, []);
 
@@ -42,12 +50,19 @@ export default function EditProfileScreen({ navigation }: Props) {
   const trimmedName = name.trim();
   const trimmedHandle = normaliseHandle(handle.trim());
   const isDirty =
-    trimmedName !== profile.name ||
+    trimmedName !== initialName ||
     trimmedHandle !== normaliseHandle(profile.handle) ||
-    location !== profile.location;
+    location !== initialArea;
   const isValid = trimmedName.length > 0 && trimmedHandle.length > 0;
 
-  const initial = trimmedName.charAt(0) || profile.name.charAt(0);
+  const initial = trimmedName.charAt(0) || initialName.charAt(0);
+
+  const save = async () => {
+    if (!isDirty || !isValid || saving) return;
+    setSaving(true);
+    await update({ name: trimmedName, homeArea: location });
+    navigation.goBack();
+  };
 
   return (
     <View style={styles.screen}>
@@ -183,8 +198,9 @@ export default function EditProfileScreen({ navigation }: Props) {
           <View style={styles.actions}>
             <Button
               label="Save changes"
-              onPress={() => navigation.goBack()}
+              onPress={() => void save()}
               disabled={!isDirty || !isValid}
+              loading={saving}
             />
           </View>
         </ScrollView>

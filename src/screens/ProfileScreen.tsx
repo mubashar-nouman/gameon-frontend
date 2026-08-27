@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { StackScreenProps } from '@react-navigation/stack';
 
 import { profile, unreadCount } from '../data';
+import { useSession } from '../session/SessionContext';
 import type { ProfileStackParamList } from '../navigation/types';
 import { colors } from '../theme/colors';
 import { radius } from '../theme/radius';
@@ -30,6 +31,12 @@ const APP_ITEMS: MenuItem[] = [
 
 export default function ProfileScreen({ navigation }: Props) {
   const insets = useSafeAreaInsets();
+  const { session, signOut } = useSession();
+
+  // The signed-in name and area win over the seeded profile; the reputation
+  // numbers stay dummy until a backend supplies them.
+  const name = session?.name ?? profile.name;
+  const homeArea = session?.homeArea ?? profile.location;
 
   const reliability = Math.round(
     (profile.matchesCompleted / profile.matchesPlayed) * 100,
@@ -53,15 +60,15 @@ export default function ProfileScreen({ navigation }: Props) {
       {/* Identity — the pencil is the only route into editing. */}
       <View style={styles.identity}>
         <View style={styles.avatar}>
-          <Text style={styles.avatarText}>{profile.name.charAt(0)}</Text>
+          <Text style={styles.avatarText}>{name.charAt(0)}</Text>
         </View>
 
         <View style={styles.identityText}>
           <Text style={styles.name} numberOfLines={1}>
-            {profile.name}
+            {name}
           </Text>
           <Text style={styles.handle} numberOfLines={1}>
-            {profile.handle} · {profile.memberSince}
+            {homeArea}
           </Text>
           <View style={styles.ratingRow}>
             <Ionicons name="star" size={13} color={colors.accent} />
@@ -121,6 +128,7 @@ export default function ProfileScreen({ navigation }: Props) {
 
       <Pressable
         accessibilityRole="button"
+        onPress={() => void signOut()}
         style={({ pressed }) => [styles.signOut, pressed && styles.pressed]}
       >
         <Ionicons name="log-out-outline" size={18} color={colors.error} />

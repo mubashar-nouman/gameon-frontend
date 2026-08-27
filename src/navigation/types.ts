@@ -4,6 +4,13 @@ export type DiscoverStackParamList = {
   Notifications: undefined;
 };
 
+export type AuthStackParamList = {
+  Phone: undefined;
+  /** National 10-digit number, carried forward for display and storage. */
+  Otp: { phone: string };
+  ProfileSetup: { phone: string };
+};
+
 export type ProfileStackParamList = {
   ProfileHome: undefined;
   EditProfile: undefined;

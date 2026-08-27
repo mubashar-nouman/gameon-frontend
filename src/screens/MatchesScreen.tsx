@@ -16,7 +16,8 @@ import SegmentedTabs, {
 } from '../components/matches/SegmentedTabs';
 import SportSelector from '../components/home/SportSelector';
 import { FadeInView } from '../components/ui';
-import { cities, isInArea, openMatches, sports, type OpenMatch } from '../data';
+import { cities, isInArea, sports, type OpenMatch } from '../data';
+import { useMatches } from '../matches/MatchesContext';
 import { colors } from '../theme/colors';
 import { radius } from '../theme/radius';
 import { screenPadding, spacing } from '../theme/spacing';
@@ -31,12 +32,9 @@ const SEGMENTS: Segment[] = [
   { id: 'mine', label: 'My matches' },
 ];
 
-/** Matches the signed-out user has requested or created, until auth exists. */
-const REQUESTED_IDS = ['m2', 'm5'];
-const OWNED_IDS = ['m1', 'm7'];
-
 export default function MatchesScreen() {
   const insets = useSafeAreaInsets();
+  const { matches: openMatches, ownedIds, requestedIds } = useMatches();
   const [segment, setSegment] = useState('nearby');
   const [sportId, setSportId] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
@@ -50,18 +48,18 @@ export default function MatchesScreen() {
       openMatches.filter((match) =>
         isInArea(match.area, cityId, cityAreaId),
       ),
-    [cityId, cityAreaId],
+    [openMatches, cityId, cityAreaId],
   );
 
   const bySegment = useMemo(() => {
     if (segment === 'requests') {
-      return inCity.filter((match) => REQUESTED_IDS.includes(match.id));
+      return inCity.filter((match) => requestedIds.includes(match.id));
     }
     if (segment === 'mine') {
-      return inCity.filter((match) => OWNED_IDS.includes(match.id));
+      return inCity.filter((match) => ownedIds.includes(match.id));
     }
     return inCity;
-  }, [inCity, segment]);
+  }, [inCity, segment, ownedIds, requestedIds]);
 
   const visible = useMemo(
     () =>
@@ -75,12 +73,12 @@ export default function MatchesScreen() {
         ...item,
         count:
           item.id === 'requests'
-            ? inCity.filter((m) => REQUESTED_IDS.includes(m.id)).length
+            ? inCity.filter((m) => requestedIds.includes(m.id)).length
             : item.id === 'mine'
-              ? inCity.filter((m) => OWNED_IDS.includes(m.id)).length
+              ? inCity.filter((m) => ownedIds.includes(m.id)).length
               : undefined,
       })),
-    [inCity],
+    [inCity, ownedIds, requestedIds],
   );
 
   const onRefresh = () => {

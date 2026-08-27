@@ -16,6 +16,8 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import AboutScreen from './src/screens/AboutScreen';
 import ArenaDetailScreen from './src/screens/ArenaDetailScreen';
 import BookingsScreen from './src/screens/BookingsScreen';
+import CreateMatchScreen from './src/screens/CreateMatchScreen';
+import MatchCreatedScreen from './src/screens/MatchCreatedScreen';
 import EditProfileScreen from './src/screens/EditProfileScreen';
 import HelpScreen from './src/screens/HelpScreen';
 import HomeScreen from './src/screens/HomeScreen';
@@ -36,8 +38,10 @@ import type {
   AuthStackParamList,
   DiscoverStackParamList,
   ProfileStackParamList,
+  RootStackParamList,
   RootTabParamList,
 } from './src/navigation/types';
+import { MatchesProvider } from './src/matches/MatchesContext';
 import { SessionProvider, useSession } from './src/session/SessionContext';
 import { colors } from './src/theme/colors';
 
@@ -55,6 +59,7 @@ const Tab = createBottomTabNavigator<RootTabParamList>();
 const DiscoverStack = createStackNavigator<DiscoverStackParamList>();
 const ProfileStack = createStackNavigator<ProfileStackParamList>();
 const AuthStack = createStackNavigator<AuthStackParamList>();
+const RootStack = createStackNavigator<RootStackParamList>();
 
 const navigationTheme = {
   ...DefaultTheme,
@@ -141,7 +146,14 @@ function AppNavigator() {
   return (
     <Tab.Navigator
       tabBar={(props) => (
-        <FloatingTabBar {...props} icons={tabIcons} labels={tabLabels} />
+        <FloatingTabBar
+          {...props}
+          icons={tabIcons}
+          labels={tabLabels}
+          onCreatePress={() =>
+            props.navigation.getParent()?.navigate('CreateMatch')
+          }
+        />
       )}
       screenOptions={{
         headerShown: false,
@@ -184,6 +196,22 @@ function AppNavigator() {
         })}
       />
     </Tab.Navigator>
+  );
+}
+
+function RootNavigator() {
+  return (
+    <RootStack.Navigator
+      screenOptions={{ ...stackScreenOptions, gestureEnabled: false }}
+    >
+      <RootStack.Screen name="Tabs" component={AppNavigator} />
+      <RootStack.Screen
+        name="CreateMatch"
+        component={CreateMatchScreen}
+        options={{ gestureEnabled: true }}
+      />
+      <RootStack.Screen name="MatchCreated" component={MatchCreatedScreen} />
+    </RootStack.Navigator>
   );
 }
 
@@ -231,7 +259,7 @@ function Root() {
           <SplashScreen onFinish={handleSplashFinish} />
         ) : (
           <NavigationContainer theme={navigationTheme}>
-            {session ? <AppNavigator /> : <AuthNavigator />}
+            {session ? <RootNavigator /> : <AuthNavigator />}
           </NavigationContainer>
         )}
         <StatusBar style={showSplash ? 'light' : 'dark'} />
@@ -243,7 +271,9 @@ function Root() {
 export default function App() {
   return (
     <SessionProvider>
-      <Root />
+      <MatchesProvider>
+        <Root />
+      </MatchesProvider>
     </SessionProvider>
   );
 }

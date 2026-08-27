@@ -27,11 +27,11 @@ import {
   getArea,
   getCity,
   isInArea,
-  openMatches,
   sports,
   unreadCount,
   user,
 } from '../data';
+import { useMatches } from '../matches/MatchesContext';
 import type { DiscoverStackParamList } from '../navigation/types';
 import { colors } from '../theme/colors';
 import { radius } from '../theme/radius';
@@ -44,6 +44,7 @@ const TAB_BAR_CLEARANCE = 96;
 
 export default function HomeScreen({ navigation }: Props) {
   const insets = useSafeAreaInsets();
+  const { matches: openMatches } = useMatches();
   const [selectedSportId, setSelectedSportId] = useState(sports[0].id);
   const [query, setQuery] = useState('');
   const [refreshing, setRefreshing] = useState(false);
@@ -76,7 +77,7 @@ export default function HomeScreen({ navigation }: Props) {
           match.sportId === selectedSportId &&
           isInArea(match.area, cityId, areaId),
       ),
-    [selectedSportId, cityId, areaId],
+    [openMatches, selectedSportId, cityId, areaId],
   );
 
   /** Distance to the arena hosting the closest open match, if we can match one. */
